@@ -1,0 +1,1 @@
+docker run -v /home/edmar/storage:/storage -e STORAGE_DIR=/storage -e URL=https://127.0.0.1 panel-store:v1

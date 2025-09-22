@@ -1,0 +1,1 @@
+docker run -v /home/edmar/storage:/storage -e ACCESS_KEY=AKIA5XMBGMFGM7QMANNH -e SECRET_KEY=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 -e BUCKET=cloud-store-mall -e REGION=us-east-1 cloud-store:v2

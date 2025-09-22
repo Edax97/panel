@@ -1,0 +1,11 @@
+[Unit]
+Description=Run panel-pod every 2 hours
+
+[Timer]
+OnCalendar=*-*-* 01/2:30:00
+Persistent=true
+OnBootSec=60
+Unit=pod-panel-pod.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer at startup and 12:00
+
+[Timer]
+OnBootSec=1min
+Unit=generate-storage.service
+OnCalendar=*-*-* 00/2:00:00
+
+[Install]
+WantedBy=timers.target
