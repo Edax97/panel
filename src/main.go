@@ -7,7 +7,6 @@ import (
 )
 
 var DIR = os.Args[1]
-var URL = os.Args[2]
 
 var FILTERED = make([]int, 0)
 
@@ -16,7 +15,6 @@ func main() {
 	if DIR == "" {
 		DIR = "storage"
 	}
-	fmt.Println("Starting retrieval...", DIR, URL)
 
 	data, err := ReadDataDisc("data.csv", ';')
 	if err != nil {
