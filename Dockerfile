@@ -1,7 +1,7 @@
 FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
-COPY src/* ./
+COPY save-csv/* ./
 RUN GOOS=linux GOARCH=arm64 go build -o bin .
 
 FROM debian:bookworm-slim AS runtime
