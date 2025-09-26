@@ -9,10 +9,10 @@ func main() {
 	var savePath = os.Getenv("CSV_SAVE_PATH")
 
 	if savePath == "" {
-		savePath = "save-csv"
+		savePath = "csv-save"
 	}
 	if inputPath == "" {
-		inputPath = "input-csv"
+		inputPath = "csv-input"
 	}
 
 	csvData := CSVData{saveComma: ',', inComma: ';'}
