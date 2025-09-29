@@ -7,7 +7,7 @@ login (){
   local PAYLOAD="{\"scheme\":\"BASIC\",\"user\":\"$USER\",\"password\":\"$PASS\"}"
   curl -k -X POST "$URL" \
     -H "Content-Type: application/json" \
-    -d "$PAYLOAD" | jq -r '.AccessToken.access-token'
+    -d "$PAYLOAD" | jq '.AccessToken."access-token"'
 }
 download (){
   local URL="$1"
@@ -39,16 +39,16 @@ if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] &
   for i in "${!urls[@]}"; do
     url="${urls[i]}"
     pass="${psws[i]}"
-    user="${user[i]}"
+    user="${users[i]}"
     echo "- $url $user $pass"
-    if [ -n "$url" ] && [ -n "$user" ] && [ -n "$pass" ]; then
-      token=$(login "$url" "${users[i]}" "${psws[i]}")
-      if [ -n "$token" ]; then
-        download "$url" "$token" "$CSV_INPUT_PATH/data_.csv"
-      else
-        echo "No se pudo obtener token: $url" >&2
-      fi
+    #if [ -n "$url" ] && [ -n "$user" ] && [ -n "$pass" ]; then
+    token=$(login "$url" "$user" "$pass")
+    if [ -n "$token" ]; then
+      download "$url" "$token" "$CSV_INPUT_PATH/data_$i.csv"
+    else
+      echo "No se pudo obtener token: $url" >&2
     fi
+    #fi
   done
 else
   echo "Secretos tienen distinto numero de lineas" >&2
