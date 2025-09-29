@@ -2,12 +2,11 @@
 mkdir -p ~/app
 cd ~/app || exit
 
-
-export PANEL_URLS PANEL_PASS PANEL_USERS
 export CSV_INPUT_PATH="/home/panel/csv-input"
 export CSV_SAVE_PATH="/home/panel/csv-save"
+mkdir -p CSV_INPUT_PATH CSV_SAVE_PATH
 
-./bin-get || {
+./get-panels.sh || {
   echo "Get panel data failed"; exit 1
 }
 ./bin-save || {
