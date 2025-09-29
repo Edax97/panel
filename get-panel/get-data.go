@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"sync"
@@ -17,8 +18,8 @@ func GetItems(list string) []string {
 }
 
 type PanelStore interface {
-	fetchCSV(url string, user string, pass string) ([][]string, error)
-	saveCSV(data [][]string, fileName string) error
+	fetchCSV(url string, user string, pass string) (io.Reader, error)
+	saveCSV(data io.Reader, fileName string) error
 }
 
 func GetPanelData(api PanelStore) {

@@ -1,0 +1,11 @@
+{
+  "AccessToken": {
+    "token_type":"Bearer",
+    "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6MjUyLCJpYXQiOjE3NTkxMzQ4MjEsImV4cCI6MTc1OTEzODQyMSwiYXVkIjoiRGZkVzMxMVE2YWVLRzQ5dk5GS3ZWQ3NFS1QyT01odlZvalowQ0ZDRFVsOCIsInN1YiI6IlNlY3VyaXR5QWRtaW4ifQ.w945Uuou-eSK0FZZlemkyXS2XJ_vs8HbEdG2YcdS8NA",
+    "info":{"name":"SecurityAdmin"},
+    "role":"CUSTOM,SECAUD,SECADM,INSTALLER,ENGINEER,OPERATOR,VIEWER"
+  },
+  "Error":{"ErrorCode":0},
+  "DaysPasswordValidity":90,
+  "LockDuration":600
+}
