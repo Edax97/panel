@@ -13,6 +13,7 @@ download (){
   local URL="$1"
   local TOKEN="$2"
   local DEST_PATH="$3"
+  echo "Saving to $DEST_PATH"
   curl -k "$URL/csv?start_date=2025-09-01T00:00&end_date=2025-09-01T02:00" \
     -H "Accept: text/csv, /" \
     -H "Authorization:  Bearer $TOKEN" \
@@ -41,14 +42,14 @@ if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] &
     pass="${psws[i]}"
     user="${users[i]}"
     echo "- $url $user $pass"
-    #if [ -n "$url" ] && [ -n "$user" ] && [ -n "$pass" ]; then
-    token=$(login "$url" "$user" "$pass")
-    if [ -n "$token" ]; then
-      download "$url" "$token" "$CSV_INPUT_PATH/data_$i.csv"
-    else
-      echo "No se pudo obtener token: $url" >&2
+    if [ -n "$url" ] && [ -n "$user" ] && [ -n "$pass" ]; then
+      token=$(login "$url" "$user" "$pass")
+      if [ -n "$token" ]; then
+        download "$url" "$token" "$CSV_INPUT_PATH/data_$i.csv"
+      else
+        echo "No se pudo obtener token: $url" >&2
+      fi
     fi
-    #fi
   done
 else
   echo "Secretos tienen distinto numero de lineas" >&2
