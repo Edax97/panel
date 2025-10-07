@@ -5,8 +5,8 @@ import (
 )
 
 func main() {
-	var inputPath = os.Getenv("CSV_INPUT_PATH")
-	var savePath = os.Getenv("CSV_SAVE_PATH")
+	var inputPath = os.Args[1]
+	var savePath = os.Args[2]
 
 	if savePath == "" {
 		savePath = "csv-save"

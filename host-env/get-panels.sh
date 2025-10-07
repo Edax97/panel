@@ -5,16 +5,18 @@ login (){
   local USER="$2"
   local PASS="$3"
   local PAYLOAD="{\"scheme\":\"BASIC\",\"user\":\"$USER\",\"password\":\"$PASS\"}"
-  curl -k -X POST "$URL" \
+  local res="$(curl -k -X POST "$URL" \
     -H "Content-Type: application/json" \
-    -d "$PAYLOAD" | jq '.AccessToken."access-token"'
+    -d "$PAYLOAD")"
+  jq -r '.AccessToken."access_token"' <<< "$res"
 }
 download (){
   local URL="$1"
   local TOKEN="$2"
-  local DEST_PATH="$3"
-  echo "Saving to $DEST_PATH"
-  curl -k "$URL/csv?start_date=2025-09-01T00:00&end_date=2025-09-01T02:00" \
+  local FILENAME="$3"
+  local last_date="$(date --date='8 hours ago' +%Y-%m-%dT%H:%M)"
+  local current_date="$(date +%Y-%m-%dT%H:%M)"
+  curl -k "$URL/csv?start_date=$last_date&end_date=$current_date" \
     -H "Accept: text/csv, /" \
     -H "Authorization:  Bearer $TOKEN" \
     -H 'Connection: keep-alive' \
@@ -22,7 +24,8 @@ download (){
     -H 'Sec-Fetch-Dest: empty' \
     -H 'Sec-Fetch-Mode: cors' \
     -H 'Sec-Fetch-Site: same-origin' \
-    -H 'Sec-GPC: 1' > "$DEST_PATH"
+    -H 'Sec-GPC: 1' \
+    --output "$FILENAME" --fail
 }
 
 PANEL_USERS="$(bws secret get f2db263d-b244-482d-a37f-b3640162669d | jq -r '.value')"
@@ -45,6 +48,7 @@ if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] &
     if [ -n "$url" ] && [ -n "$user" ] && [ -n "$pass" ]; then
       token=$(login "$url" "$user" "$pass")
       if [ -n "$token" ]; then
+        echo "Saving to $CSV_INPUT_PATH, with Token $token"
         download "$url" "$token" "$CSV_INPUT_PATH/data_$i.csv"
       else
         echo "No se pudo obtener token: $url" >&2

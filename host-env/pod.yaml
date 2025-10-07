@@ -6,7 +6,7 @@ spec:
   volumes:
     - name: host-storage
       hostPath:
-        path: /home/panel/csv-save
+        path: /home/panel/csv-input
         type: Directory
   containers:
     - name: cloud-container

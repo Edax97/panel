@@ -17,11 +17,10 @@ func (C CSVData) ReadCSVInput(fileName string) ([][]string, error) {
 }
 
 func (C CSVData) FilterEnergyConsumption(parsed [][]string, savePath string) error {
-	var month string
-	var year, day int
+	var day int
 	var WHCOLUMNS = make([]int, 0)
 
-	deviceHeaders := parsed[2]
+	deviceHeaders := parsed[1]
 	fieldHeaders := parsed[4][1:]
 
 	for i, field := range fieldHeaders {
@@ -38,11 +37,9 @@ func (C CSVData) FilterEnergyConsumption(parsed [][]string, savePath string) err
 			continue
 		}
 		if parsedTime.Minute() == 0 && parsedTime.Hour() == 0 {
-			month = parsedTime.Month().String()
-			year = parsedTime.Year()
 			day = parsedTime.Day()
 
-			saveFile := fmt.Sprintf("%s/%s-%d.csv", savePath, month, year)
+			saveFile := fmt.Sprintf("%s/%s.csv", savePath, "filtered-values")
 
 			monthParsed, err := createMonthCSV(saveFile)
 			if monthParsed == nil {
@@ -52,9 +49,6 @@ func (C CSVData) FilterEnergyConsumption(parsed [][]string, savePath string) err
 			for _, index := range WHCOLUMNS {
 				valueWh := record[index]
 				device := deviceHeaders[index]
-				// Copy valueWh to year-month file at row day and column device
-				fmt.Printf("%v - Data: %s-%v-%v, %s: %s\n", index, month, year, day, device, valueWh)
-
 				// Find device in file, otherwise add a column
 				col := -1
 				for i, header := range monthParsed[0] {

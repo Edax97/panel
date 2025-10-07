@@ -2,9 +2,6 @@
 FILE_TO_UPLOAD="/storage"
 sleep 5
 
-while [ ! -e "/storage/uploaded" ]; do sleep 1; done
-rm /storage/uploaded || "Already deleted /uploaded"
-
 echo "Starting upload... $BUCKET"
 export AWS_ACCESS_KEY_ID=$ACCESS_KEY
 export AWS_SECRET_ACCESS_KEY=$SECRET_KEY
