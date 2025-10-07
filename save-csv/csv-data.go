@@ -1,9 +1,11 @@
 package main
 
 import (
+	"data-store/sendServer"
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -17,16 +19,23 @@ func (C CSVData) ReadCSVInput(fileName string) ([][]string, error) {
 }
 
 func (C CSVData) FilterEnergyConsumption(parsed [][]string, savePath string) error {
-	var day int
 	var WHCOLUMNS = make([]int, 0)
 
 	deviceHeaders := parsed[1]
+	nameHeaders := parsed[2]
 	fieldHeaders := parsed[4][1:]
 
 	for i, field := range fieldHeaders {
 		if field == "Total Received Active Energy" || field == "Total Delivered Active Energy" {
 			WHCOLUMNS = append(WHCOLUMNS, i+1)
 		}
+	}
+	filteredData := [][]string{{"ID"}, {"Time"}}
+	for _, index := range WHCOLUMNS {
+		device := deviceHeaders[index]
+		name := nameHeaders[index]
+		filteredData[0] = append(filteredData[0], device)
+		filteredData[1] = append(filteredData[1], name)
 	}
 
 	for _, record := range parsed[6:] {
@@ -36,41 +45,27 @@ func (C CSVData) FilterEnergyConsumption(parsed [][]string, savePath string) err
 			fmt.Println("Error parsing time:", err)
 			continue
 		}
-		if parsedTime.Minute() == 0 && parsedTime.Hour() == 0 {
-			day = parsedTime.Day()
-
-			saveFile := fmt.Sprintf("%s/%s.csv", savePath, "filtered-values")
-
-			monthParsed, err := createMonthCSV(saveFile)
-			if monthParsed == nil {
-				monthParsed, err = ReadCSV(saveFile, C.saveComma)
-			}
-			PanicError(err)
-			for _, index := range WHCOLUMNS {
+		if parsedTime.Minute() == 0 {
+			row := []string{timestamp}
+			for j, index := range WHCOLUMNS {
 				valueWh := record[index]
-				device := deviceHeaders[index]
-				// Find device in file, otherwise add a column
-				col := -1
-				for i, header := range monthParsed[0] {
-					if header == device {
-						col = i
-						break
-					}
+				intWh, err := strconv.Atoi(valueWh)
+				if err != nil {
+					fmt.Println("Error parsing value:", err)
+					continue
 				}
-				if col == -1 {
-					col = len(monthParsed[0])
-					monthParsed[0] = append(monthParsed[0], device)
-					for j := 1; j < len(monthParsed); j++ {
-						monthParsed[j] = append(monthParsed[j], "")
-					}
-				}
-				monthParsed[day][col] = valueWh
-			}
 
-			SaveCSV(saveFile, monthParsed)
+				row = append(row, valueWh)
+				ok, _ := sendServer.SendMessage(deviceHeaders[j], parsedTime, intWh)
+				if ok {
+					//update lastSent value at imei = timestamp
+				}
+			}
+			filteredData = append(filteredData, row)
 		}
 	}
 
+	SaveCSV(savePath, filteredData)
 	return nil
 }
 

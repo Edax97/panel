@@ -3,45 +3,51 @@ package main
 import (
 	"log"
 	"os"
-	"regexp"
-	"strconv"
-	"strings"
+	"sync"
 )
 
 var imeiMap = make(map[string]string)
 var imeiList = make([][]string, 1)
 
 func main() {
-	var deviceStr string
-	imeiList[0] = []string{"ID", "IMEI"}
-	InputFile := os.Args[1]
+	imeiList[0] = []string{"ID", "NAME", "PANEL", "IMEI"}
+	InputDir := os.Args[1]
 	ImeiFile := os.Args[2]
 
-	reg := regexp.MustCompile("[^a-zA-Z0-9]+") // Matches any character not a letter or number
+	var wg sync.WaitGroup
+	var mutex sync.Mutex
 
-	fileData, err := readCSV(InputFile, ',')
-	if err != nil {
-		log.Panic(err)
-	}
-	deviceIds := fileData[1]
-	for _, device := range deviceIds {
-		_, ok := imeiMap[device]
-		if !ok {
-			//base convert decoding
-			deviceSplit := strings.Split(device, ":")
-			if len(deviceSplit) < 2 {
-				continue
-			}
-			deviceStr = reg.ReplaceAllString(deviceSplit[1], "")
-			imei, err := strconv.ParseInt(deviceStr, 36, 64)
+	files, _ := os.ReadDir(InputDir)
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		wg.Add(1)
+		go func(f string) {
+			defer func() {
+				mutex.Unlock()
+				wg.Done()
+			}()
+			mutex.Lock()
+			fileData, err := readCSV(InputDir+"/"+f, ',')
 			if err != nil {
 				log.Panic(err)
 			}
-			imei = 100000000000000 + imei%100000000000000
-			imeiStr := strconv.FormatInt(imei, 10)
-			imeiMap[device] = imeiStr
-			imeiList = append(imeiList, []string{device, imeiStr})
-		}
+			ids := fileData[0][1:]
+			names := fileData[1][1:]
+
+			for j, id := range ids {
+				name := names[j]
+				_, ok := imeiMap[id]
+				if !ok {
+					imeiList = append(imeiList, []string{id, name, f, ""})
+					imeiMap[id] = name
+				}
+			}
+		}(file.Name())
 	}
+
+	wg.Wait()
 	saveSCV(ImeiFile, imeiList)
 }

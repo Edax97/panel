@@ -5,16 +5,16 @@ import (
 )
 
 func main() {
-	var inputPath = os.Args[1]
-	var savePath = os.Args[2]
+	var inputDir = os.Args[1]
+	var saveDir = os.Args[2]
 
-	if savePath == "" {
-		savePath = "csv-save"
+	if saveDir == "" {
+		saveDir = "csv-save"
 	}
-	if inputPath == "" {
-		inputPath = "csv-input"
+	if inputDir == "" {
+		inputDir = "csv-input"
 	}
 
 	csvData := CSVData{saveComma: ',', inComma: ';'}
-	GetEnergyCSV(csvData, inputPath, savePath)
+	GetEnergyCSV(csvData, inputDir, saveDir)
 }

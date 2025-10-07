@@ -1,71 +1,109 @@
-ID,IMEI
-zigbee:19_zd_WHr_O,100100094872308
-zigbee:19_zd_WHr_I,100100094872302
-zigbee:14_zd_WHr_O,100089210960628
-zigbee:8_zd_WHr_O,100019553925876
-zigbee:30_zd_WHr_I,100237232159470
-zigbee:27_zd_WHr_I,100174105471726
-zigbee:8_zd_WHr_I,100019553925870
-zigbee:30_zd_WHr_O,100237232159476
-zigbee:14_zd_WHr_I,100089210960622
-zigbee:22_zd_WHr_O,100163221560052
-zigbee:22_zd_WHr_I,100163221560046
-zigbee:27_zd_WHr_O,100174105471732
-zigbee:26_zd_WHr_O,100171928689396
-zigbee:3_zd_WHr_O,100008670014196
-zigbee:3_zd_WHr_I,100008670014190
-zigbee:4_zd_WHr_I,100010846796526
-zigbee:4_zd_WHr_O,100010846796532
-zigbee:26_zd_WHr_I,100171928689390
-zigbee:10_zd_WHr_O,100080503831284
-zigbee:10_zd_WHr_I,100080503831278
-zigbee:23_zd_WHr_O,100165398342388
-zigbee:28_zd_WHr_I,100176282254062
-zigbee:23_zd_WHr_I,100165398342382
-zigbee:18_zd_WHr_I,100097918089966
-zigbee:18_zd_WHr_O,100097918089972
-zigbee:33_zd_WHr_O,100243762506484
-zigbee:33_zd_WHr_I,100243762506478
-zigbee:25_zd_WHr_I,100169751907054
-zigbee:25_zd_WHr_O,100169751907060
-zigbee:15_zd_WHr_O,100091387742964
-zigbee:5_zd_WHr_O,100013023578868
-zigbee:5_zd_WHr_I,100013023578862
-zigbee:12_zd_WHr_O,100084857395956
-zigbee:28_zd_WHr_O,100176282254068
-zigbee:2_zd_WHr_I,100006493231854
-zigbee:15_zd_WHr_I,100091387742958
-zigbee:2_zd_WHr_O,100006493231860
-zigbee:32_zd_WHr_I,100241585724142
-zigbee:6_zd_WHr_I,100015200361198
-zigbee:32_zd_WHr_O,100241585724148
-zigbee:6_zd_WHr_O,100015200361204
-zigbee:29_zd_WHr_I,100178459036398
-zigbee:29_zd_WHr_O,100178459036404
-zigbee:12_zd_WHr_I,100084857395950
-zigbee:24_zd_WHr_O,100167575124724
-zigbee:1_zd_WHr_I,100004316449518
-zigbee:1_zd_WHr_O,100004316449524
-zigbee:16_zd_WHr_O,100093564525300
-zigbee:20_zd_WHr_O,100158867995380
-zigbee:16_zd_WHr_I,100093564525294
-zigbee:20_zd_WHr_I,100158867995374
-zigbee:17_zd_WHr_O,100095741307636
-zigbee:17_zd_WHr_I,100095741307630
-zigbee:7_zd_WHr_I,100017377143534
-zigbee:7_zd_WHr_O,100017377143540
-zigbee:13_zd_WHr_I,100087034178286
-zigbee:31_zd_WHr_O,100239408941812
-zigbee:31_zd_WHr_I,100239408941806
-modbus:1_mb_WHr_O,100003527030004
-modbus:1_mb_WHr_I,100003527029998
-zigbee:13_zd_WHr_O,100087034178292
-zigbee:11_zd_WHr_I,100082680613614
-zigbee:11_zd_WHr_O,100082680613620
-zigbee:9_zd_WHr_I,100021730708206
-zigbee:9_zd_WHr_O,100021730708212
-zigbee:34_zd_WHr_I,100245939288814
-zigbee:24_zd_WHr_I,100167575124718
-zigbee:21_zd_WHr_O,100161044777716
-zigbee:21_zd_WHr_I,100161044777710
-zigbee:34_zd_WHr_O,100245939288820
+ID,NAME,PANEL,IMEI
+zigbee:19_zd_WHr_O,Q57,filtered_data_3.csv,
+zigbee:19_zd_WHr_I,Q57,filtered_data_3.csv,
+zigbee:14_zd_WHr_O,Q49-307-Sol y sombra,filtered_data_3.csv,
+zigbee:8_zd_WHr_O,Q36,filtered_data_3.csv,
+zigbee:30_zd_WHr_I,Q46,filtered_data_3.csv,
+zigbee:27_zd_WHr_I,Q65,filtered_data_3.csv,
+zigbee:8_zd_WHr_I,Q36,filtered_data_3.csv,
+zigbee:30_zd_WHr_O,Q46,filtered_data_3.csv,
+zigbee:14_zd_WHr_I,Q49-307-Sol y sombra,filtered_data_3.csv,
+zigbee:22_zd_WHr_O,Q60,filtered_data_3.csv,
+zigbee:22_zd_WHr_I,Q60,filtered_data_3.csv,
+zigbee:27_zd_WHr_O,Q65,filtered_data_3.csv,
+zigbee:26_zd_WHr_O,Q64,filtered_data_3.csv,
+zigbee:3_zd_WHr_O,Q69,filtered_data_3.csv,
+zigbee:3_zd_WHr_I,Q69,filtered_data_3.csv,
+zigbee:4_zd_WHr_I,Q44,filtered_data_3.csv,
+zigbee:4_zd_WHr_O,Q44,filtered_data_3.csv,
+zigbee:26_zd_WHr_I,Q64,filtered_data_3.csv,
+zigbee:10_zd_WHr_O,Q39-304-Reserva Equipada,filtered_data_3.csv,
+zigbee:10_zd_WHr_I,Q39-304-Reserva Equipada,filtered_data_3.csv,
+zigbee:23_zd_WHr_O,Q61,filtered_data_3.csv,
+zigbee:28_zd_WHr_I,Q66,filtered_data_3.csv,
+zigbee:23_zd_WHr_I,Q61,filtered_data_3.csv,
+zigbee:18_zd_WHr_I,Q55,filtered_data_3.csv,
+zigbee:18_zd_WHr_O,Q55,filtered_data_3.csv,
+zigbee:33_zd_WHr_O,Q48,filtered_data_3.csv,
+zigbee:33_zd_WHr_I,Q48,filtered_data_3.csv,
+zigbee:25_zd_WHr_I,Q63,filtered_data_3.csv,
+zigbee:25_zd_WHr_O,Q63,filtered_data_3.csv,
+zigbee:15_zd_WHr_O,Q51-309,filtered_data_3.csv,
+zigbee:5_zd_WHr_O,Q56,filtered_data_3.csv,
+zigbee:5_zd_WHr_I,Q56,filtered_data_3.csv,
+zigbee:12_zd_WHr_O,Q43,filtered_data_3.csv,
+zigbee:28_zd_WHr_O,Q66,filtered_data_3.csv,
+zigbee:2_zd_WHr_I,Q42,filtered_data_3.csv,
+zigbee:15_zd_WHr_I,Q51-309,filtered_data_3.csv,
+zigbee:2_zd_WHr_O,Q42,filtered_data_3.csv,
+zigbee:32_zd_WHr_I,Q50,filtered_data_3.csv,
+zigbee:6_zd_WHr_I,Q40,filtered_data_3.csv,
+zigbee:32_zd_WHr_O,Q50,filtered_data_3.csv,
+zigbee:6_zd_WHr_O,Q40,filtered_data_3.csv,
+zigbee:29_zd_WHr_I,Q67,filtered_data_3.csv,
+zigbee:29_zd_WHr_O,Q67,filtered_data_3.csv,
+zigbee:12_zd_WHr_I,Q43,filtered_data_3.csv,
+zigbee:24_zd_WHr_O,Q62,filtered_data_3.csv,
+zigbee:1_zd_WHr_I,Q41,filtered_data_3.csv,
+zigbee:1_zd_WHr_O,Q41,filtered_data_3.csv,
+zigbee:16_zd_WHr_O,Q53,filtered_data_3.csv,
+zigbee:20_zd_WHr_O,Q58,filtered_data_3.csv,
+zigbee:16_zd_WHr_I,Q53,filtered_data_3.csv,
+zigbee:20_zd_WHr_I,Q58,filtered_data_3.csv,
+zigbee:17_zd_WHr_O,Q54,filtered_data_3.csv,
+zigbee:17_zd_WHr_I,Q54,filtered_data_3.csv,
+zigbee:7_zd_WHr_I,Q35,filtered_data_3.csv,
+zigbee:7_zd_WHr_O,Q35,filtered_data_3.csv,
+zigbee:13_zd_WHr_I,Q47-312,filtered_data_3.csv,
+zigbee:31_zd_WHr_O,Q52-PIZZA HUT,filtered_data_3.csv,
+zigbee:31_zd_WHr_I,Q52-PIZZA HUT,filtered_data_3.csv,
+modbus:1_mb_WHr_O,Q68-SMART FIT,filtered_data_3.csv,
+modbus:1_mb_WHr_I,Q68-SMART FIT,filtered_data_3.csv,
+zigbee:13_zd_WHr_O,Q47-312,filtered_data_3.csv,
+zigbee:11_zd_WHr_I,Q45,filtered_data_3.csv,
+zigbee:11_zd_WHr_O,Q45,filtered_data_3.csv,
+zigbee:9_zd_WHr_I,Q38,filtered_data_3.csv,
+zigbee:9_zd_WHr_O,Q38,filtered_data_3.csv,
+zigbee:34_zd_WHr_I,Q37,filtered_data_3.csv,
+zigbee:24_zd_WHr_I,Q62,filtered_data_3.csv,
+zigbee:21_zd_WHr_O,Q59,filtered_data_3.csv,
+zigbee:21_zd_WHr_I,Q59,filtered_data_3.csv,
+zigbee:34_zd_WHr_O,Q37,filtered_data_3.csv,
+zigbee:47_zd_WHr_O,LOCAL 306-307 KFC,filtered_data_2.csv,
+zigbee:42_zd_WHr_O,LOCAL 101B,filtered_data_2.csv,
+zigbee:42_zd_WHr_I,LOCAL 101B,filtered_data_2.csv,
+zigbee:47_zd_WHr_I,LOCAL 306-307 KFC,filtered_data_2.csv,
+zigbee:35_zd_WHr_O,LOCAL 202,filtered_data_2.csv,
+zigbee:35_zd_WHr_I,LOCAL 202,filtered_data_2.csv,
+zigbee:51_zd_WHr_I,LOCAL 310-311 PIZZA HUT,filtered_data_2.csv,
+zigbee:51_zd_WHr_O,LOCAL 310-311 PIZZA HUT,filtered_data_2.csv,
+zigbee:38_zd_WHr_O,LOCAL 304-305,filtered_data_2.csv,
+zigbee:38_zd_WHr_I,LOCAL 304-305,filtered_data_2.csv,
+zigbee:40_zd_WHr_I,RESERVA EQUIPADA LCE41,filtered_data_2.csv,
+zigbee:40_zd_WHr_O,RESERVA EQUIPADA LCE41,filtered_data_2.csv,
+zigbee:37_zd_WHr_I,RESERVA EQUIPADA LCE38,filtered_data_2.csv,
+zigbee:37_zd_WHr_O,RESERVA EQUIPADA LCE38,filtered_data_2.csv,
+zigbee:41_zd_WHr_O,LOCAL 301-302,filtered_data_2.csv,
+zigbee:41_zd_WHr_I,LOCAL 301-302,filtered_data_2.csv,
+zigbee:44_zd_WHr_I,LOCAL 313 SMARTFIT,filtered_data_2.csv,
+zigbee:44_zd_WHr_O,LOCAL 313 SMARTFIT,filtered_data_2.csv,
+zigbee:50_zd_WHr_O,RESERVA EQUIPADA LCE51,filtered_data_2.csv,
+zigbee:50_zd_WHr_I,RESERVA EQUIPADA LCE51,filtered_data_2.csv,
+zigbee:48_zd_WHr_I,RESERVA EQUIPADA LCE49,filtered_data_2.csv,
+zigbee:39_zd_WHr_I,LOCAL 303,filtered_data_2.csv,
+zigbee:39_zd_WHr_O,LOCAL 303,filtered_data_2.csv,
+zigbee:46_zd_WHr_I,LOCAL 312,filtered_data_2.csv,
+zigbee:48_zd_WHr_O,RESERVA EQUIPADA LCE49,filtered_data_2.csv,
+zigbee:36_zd_WHr_I,LOCAL 201,filtered_data_2.csv,
+zigbee:46_zd_WHr_O,LOCAL 312,filtered_data_2.csv,
+zigbee:53_zd_WHr_I,LOCAL 205 ARGENPER,filtered_data_2.csv,
+zigbee:53_zd_WHr_O,LOCAL 205 ARGENPER,filtered_data_2.csv,
+zigbee:43_zd_WHr_I,LOCAL 108B,filtered_data_2.csv,
+zigbee:43_zd_WHr_O,LOCAL 108B,filtered_data_2.csv,
+zigbee:52_zd_WHr_O,RESERVA EQUIPADA LCE53,filtered_data_2.csv,
+zigbee:49_zd_WHr_O,LOCAL 308-309 KFC,filtered_data_2.csv,
+zigbee:52_zd_WHr_I,RESERVA EQUIPADA LCE53,filtered_data_2.csv,
+zigbee:49_zd_WHr_I,LOCAL 308-309 KFC,filtered_data_2.csv,
+zigbee:36_zd_WHr_O,LOCAL 201,filtered_data_2.csv,
+zigbee:45_zd_WHr_I,LOCAL 126,filtered_data_2.csv,
+zigbee:45_zd_WHr_O,LOCAL 126,filtered_data_2.csv,
