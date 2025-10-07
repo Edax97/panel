@@ -16,7 +16,7 @@ func main() {
 
 	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", IP, PORT))
 	if err != nil {
-		log.Panic("Conection error", err)
+		log.Panic("Conection error: ", err)
 	}
 	defer func() {
 		_ = conn.Close()

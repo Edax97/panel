@@ -40,7 +40,7 @@ var crcTable [256]uint16 = [256]uint16{0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0
 func crcChecksum(message []byte) string {
 	crc := uint16(0)
 	for _, b := range message {
-		crc = (crc >> 8) ^ crcTable[crc^uint16(b)]
+		crc = (crc>>8)&0xff ^ crcTable[(crc&0xff)^uint16(b)]
 	}
 	crcBytes := []byte{byte(crc >> 8), byte(crc & 0xff)}
 	return hex.EncodeToString(crcBytes)
