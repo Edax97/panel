@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -25,6 +26,7 @@ func main() {
 		}
 		wg.Add(1)
 		go func(f string) {
+			fmt.Println(f)
 			defer func() {
 				mutex.Unlock()
 				wg.Done()
@@ -49,5 +51,6 @@ func main() {
 	}
 
 	wg.Wait()
+	print(len(imeiMap))
 	saveSCV(ImeiFile, imeiList)
 }

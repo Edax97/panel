@@ -1,11 +1,9 @@
 package main
 
 import (
-	"data-store/sendServer"
 	"encoding/csv"
 	"fmt"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -47,19 +45,20 @@ func (C CSVData) FilterEnergyConsumption(parsed [][]string, savePath string) err
 		}
 		if parsedTime.Minute() == 0 {
 			row := []string{timestamp}
-			for j, index := range WHCOLUMNS {
+			for _, index := range WHCOLUMNS {
 				valueWh := record[index]
-				intWh, err := strconv.Atoi(valueWh)
-				if err != nil {
-					fmt.Println("Error parsing value:", err)
-					continue
-				}
+				/*
+					intWh, err := strconv.Atoi(valueWh)
+					if err != nil {
+						fmt.Println("Error parsing value:", err)
+						continue
+					}*/
 
 				row = append(row, valueWh)
-				ok, _ := sendServer.SendMessage(deviceHeaders[j], parsedTime, intWh)
-				if ok {
-					//update lastSent value at imei = timestamp
-				}
+				//ok, _ := sendServer.SendMessage(deviceHeaders[j], parsedTime, intWh)
+				//if ok {
+				//update lastSent value at imei = timestamp
+				//}
 			}
 			filteredData = append(filteredData, row)
 		}
