@@ -13,6 +13,7 @@ type WailonServer struct {
 }
 
 func NewWailonServer(ip string, port string) *WailonServer {
+	fmt.Println("Server started:", ip, port)
 	return &WailonServer{ip, port}
 }
 

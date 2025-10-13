@@ -14,10 +14,10 @@ download (){
   local URL="$1"
   local TOKEN="$2"
   local FILENAME="$3"
-  local last_date, current_date
-  last_date="$(date --date='8 hours ago' +%Y-%m-%dT%H:%M)"
-  current_date="$(date +%Y-%m-%dT%H:%M)"
-  curl -k "$URL/csv?start_date=$last_date&end_date=$current_date" \
+  local FROM, TO
+  FROM="$(date --date='4 hours ago' +%Y-%m-%dT%H:%M)"
+  TO="$(date +%Y-%m-%dT%H:%M)"
+  curl -k "$URL/csv?start_date=$FROM&end_date=$TO" \
     -H "Accept: text/csv, /" \
     -H "Authorization:  Bearer $TOKEN" \
     -H 'Connection: keep-alive' \
@@ -41,7 +41,6 @@ if [ -z "$CSV_INPUT_PATH" ]; then
   echo "CSV_INPUT_PATH not set" >&2
   exit 1
 fi
-rm "$CSV_INPUT_PATH/*"
 
 i=0
 if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] && [ "${#urls[@]}" -gt 0 ]; then
