@@ -2,79 +2,12 @@ package main
 
 import (
 	"encoding/csv"
-	"encoding/gob"
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
-
-type SentCache struct {
-	sentMap  map[string]time.Time
-	diskPath string
-}
-
-func NewSentCache(diskPath string) *SentCache {
-	cache := &SentCache{
-		diskPath: diskPath,
-		sentMap:  make(map[string]time.Time),
-	}
-	cache.loadCache()
-	return cache
-}
-
-func (c *SentCache) saveCache() {
-	f, err := os.Create(c.diskPath)
-	if err != nil {
-		return
-	}
-	defer func() {
-		_ = f.Close()
-	}()
-	encoder := gob.NewEncoder(f)
-	err = encoder.Encode(c.sentMap)
-	if err != nil {
-		return
-	}
-
-}
-
-func (c *SentCache) loadCache() {
-	f, err := os.Open(c.diskPath)
-	if err != nil {
-		c.sentMap = make(map[string]time.Time)
-		return
-	}
-	defer func() {
-		_ = f.Close()
-	}()
-
-	var data map[string]time.Time
-	decoder := gob.NewDecoder(f)
-	err = decoder.Decode(&data)
-	if err != nil {
-		c.sentMap = make(map[string]time.Time)
-		return
-	}
-	c.sentMap = data
-}
-
-func (c *SentCache) hasSent(imei string, t time.Time) bool {
-	sent, ok := c.sentMap[imei]
-	if !ok {
-		return false
-	}
-	if t.Before(sent) {
-		return true
-	}
-	return false
-}
-
-func (c *SentCache) updateSent(imei string, sent time.Time) bool {
-	c.sentMap[imei] = sent
-	c.saveCache()
-	return true
-}
 
 type PowerData struct {
 	inComma   rune
@@ -82,31 +15,58 @@ type PowerData struct {
 	server    ComServer
 }
 
+func NewPowerData(server ComServer) PowerData {
+	return PowerData{';', ',', server}
+}
+
 func (d PowerData) ReadCSVPower(fileName string) ([][]string, error) {
 	return ReadCSV(fileName, d.inComma)
 }
 
 func (d PowerData) FilterPowerData(parsed [][]string, savePath string) error {
-	//Sentcache
-	cache := NewSentCache("sent-value.gob")
-
-	var WHCOLUMNS = make([]int, 0)
-
+	// CACHE
+	//cache := NewSentCache("sent-value.gob")
+	fmt.Println("Filtering power", savePath)
 	deviceHeaders := parsed[1]
-	nameHeaders := parsed[2]
 	fieldHeaders := parsed[4][1:]
+	devicePowerData := make(map[string]*struct {
+		imei string
+		j    int
+		i    int
+		data []string
+	})
 
 	for i, field := range fieldHeaders {
+		// WHAT FIELD TO SEND
 		if field == "Total Received Active Energy" || field == "Total Delivered Active Energy" {
-			WHCOLUMNS = append(WHCOLUMNS, i+1)
+			id := strings.Replace(deviceHeaders[i+1], "_I", "_O", 1)
+			devData, ok := devicePowerData[id]
+			if !ok {
+				devicePowerData[id] = &struct {
+					imei string
+					j    int
+					i    int
+					data []string
+				}{".", -1, -1, make([]string, 0)}
+				devData = devicePowerData[id]
+			}
+			if field == "Total Received Active Energy" {
+				devData.i = i + 1
+			} else {
+				devData.j = i + 1
+			}
 		}
 	}
-	filteredData := [][]string{{"ID"}, {"Time"}}
-	for _, index := range WHCOLUMNS {
-		device := deviceHeaders[index]
-		name := nameHeaders[index]
-		filteredData[0] = append(filteredData[0], device)
-		filteredData[1] = append(filteredData[1], name)
+
+	// Set IMEI at device id
+	imeiMap := os.Getenv("IMEI_MAP")
+	for _, line := range strings.Split(imeiMap, "\n") {
+		v := strings.Split(line, ",")
+		id, imei := v[0], v[1]
+		dat, ok := devicePowerData[id]
+		if ok {
+			dat.imei = imei
+		}
 	}
 
 	for _, record := range parsed[6:] {
@@ -117,29 +77,42 @@ func (d PowerData) FilterPowerData(parsed [][]string, savePath string) error {
 			continue
 		}
 		if parsedTime.Minute() == 0 {
-			row := []string{timestamp}
-			for _, index := range WHCOLUMNS {
-				valueWh := record[index]
-				devId := deviceHeaders[index]
-				imei := devId + "imei"
-
-				intWh, err := strconv.Atoi(valueWh)
+			fmt.Println(timestamp)
+			for id, data := range devicePowerData {
+				imei, err := strconv.Atoi(data.imei)
 				if err != nil {
-					fmt.Println("Error parsing value:", err)
 					continue
 				}
-				row = append(row, valueWh)
 
-				if cache.hasSent(imei, parsedTime) {
+				v := getAtIndex(record, data.i)
+				w := getAtIndex(record, data.j)
+				if w > v {
+					v = w
+				}
+				if v < 0 {
 					continue
 				}
-				ok, _ := d.server.SendPowerValue(imei, parsedTime, intWh)
+
+				// CACHE
+				//if cache.hasSent(imei, parsedTime) {
+				//	continue
+				//}
+				fmt.Println("  ID:", id, " | time:", timestamp)
+				ok, _ := d.server.SendTimeValue(fmt.Sprintf("%d", imei), parsedTime, v)
+				data.data = append(data.data, fmt.Sprintf("%s: %d", timestamp, v))
+				// CACHE
 				if ok {
-					cache.updateSent(imei, parsedTime)
+					//	cache.updateSent(imei, parsedTime)
 				}
 			}
-			filteredData = append(filteredData, row)
 		}
+	}
+
+	filteredData := [][]string{{"ID", "IMEI"}}
+	for id, data := range devicePowerData {
+		row := []string{id, data.imei}
+		row = append(row, data.data...)
+		filteredData = append(filteredData, row)
 	}
 
 	SaveCSV(savePath, filteredData)
@@ -181,4 +154,15 @@ func SaveCSV(name string, data [][]string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func getAtIndex(s []string, index int) int {
+	if index < 0 || index >= len(s) {
+		return -1
+	}
+	v, err := strconv.Atoi(s[index])
+	if err != nil {
+		return -1
+	}
+	return v
 }

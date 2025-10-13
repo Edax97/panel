@@ -1,8 +1,12 @@
 package main
 
 import (
+	"filter-power/wailonServer"
 	"os"
 )
+
+var IP string = os.Getenv("SERVER_IP")
+var PORT string = os.Getenv("SERVER_PORT")
 
 func main() {
 	var inputDir = os.Args[1]
@@ -14,7 +18,9 @@ func main() {
 	if inputDir == "" {
 		inputDir = "csv-input"
 	}
+	ser := wailonServer.NewWailonServer(IP, PORT)
+	//ser := wailonServer.NewMockServer()
+	d := NewPowerData(ser)
 
-	dataSource := PowerData{saveComma: ',', inComma: ';'}
-	FilterPower(dataSource, inputDir, saveDir)
+	FilterPower(d, inputDir, saveDir)
 }

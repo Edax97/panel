@@ -1,4 +1,4 @@
-package sendServer
+package wailonServer
 
 import (
 	"bufio"

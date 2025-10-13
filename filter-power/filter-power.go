@@ -3,12 +3,13 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"time"
 )
 
 type ComServer interface {
-	SendPowerValue(imei string, time time.Time, value int) (bool, error)
+	SendTimeValue(imei string, time time.Time, value int) (bool, error)
 }
 
 type CSVSource interface {
@@ -30,11 +31,14 @@ func FilterPower(store CSVSource, inputDir string, saveDir string) {
 		}
 		wg.Add(1)
 		go func(f string) {
+			mutex.Lock()
 			defer func() {
 				mutex.Unlock()
 				wg.Done()
 			}()
-			mutex.Lock()
+			if !strings.HasSuffix(f, ".csv") {
+				return
+			}
 			data, err := store.ReadCSVPower(inputDir + "/" + f)
 			PanicError(err)
 			savePath := fmt.Sprintf("%s/f_%s", saveDir, f)
