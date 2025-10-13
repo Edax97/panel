@@ -2,21 +2,94 @@ package main
 
 import (
 	"encoding/csv"
+	"encoding/gob"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 )
 
-type CSVData struct {
+type SentCache struct {
+	sentMap  map[string]time.Time
+	diskPath string
+}
+
+func NewSentCache(diskPath string) *SentCache {
+	cache := &SentCache{
+		diskPath: diskPath,
+		sentMap:  make(map[string]time.Time),
+	}
+	cache.loadCache()
+	return cache
+}
+
+func (c *SentCache) saveCache() {
+	f, err := os.Create(c.diskPath)
+	if err != nil {
+		return
+	}
+	defer func() {
+		_ = f.Close()
+	}()
+	encoder := gob.NewEncoder(f)
+	err = encoder.Encode(c.sentMap)
+	if err != nil {
+		return
+	}
+
+}
+
+func (c *SentCache) loadCache() {
+	f, err := os.Open(c.diskPath)
+	if err != nil {
+		c.sentMap = make(map[string]time.Time)
+		return
+	}
+	defer func() {
+		_ = f.Close()
+	}()
+
+	var data map[string]time.Time
+	decoder := gob.NewDecoder(f)
+	err = decoder.Decode(&data)
+	if err != nil {
+		c.sentMap = make(map[string]time.Time)
+		return
+	}
+	c.sentMap = data
+}
+
+func (c *SentCache) hasSent(imei string, t time.Time) bool {
+	sent, ok := c.sentMap[imei]
+	if !ok {
+		return false
+	}
+	if t.Before(sent) {
+		return true
+	}
+	return false
+}
+
+func (c *SentCache) updateSent(imei string, sent time.Time) bool {
+	c.sentMap[imei] = sent
+	c.saveCache()
+	return true
+}
+
+type PowerData struct {
 	inComma   rune
 	saveComma rune
+	server    ComServer
 }
 
-func (C CSVData) ReadCSVInput(fileName string) ([][]string, error) {
-	return ReadCSV(fileName, C.inComma)
+func (d PowerData) ReadCSVPower(fileName string) ([][]string, error) {
+	return ReadCSV(fileName, d.inComma)
 }
 
-func (C CSVData) FilterEnergyConsumption(parsed [][]string, savePath string) error {
+func (d PowerData) FilterPowerData(parsed [][]string, savePath string) error {
+	//Sentcache
+	cache := NewSentCache("sent-value.gob")
+
 	var WHCOLUMNS = make([]int, 0)
 
 	deviceHeaders := parsed[1]
@@ -47,18 +120,23 @@ func (C CSVData) FilterEnergyConsumption(parsed [][]string, savePath string) err
 			row := []string{timestamp}
 			for _, index := range WHCOLUMNS {
 				valueWh := record[index]
-				/*
-					intWh, err := strconv.Atoi(valueWh)
-					if err != nil {
-						fmt.Println("Error parsing value:", err)
-						continue
-					}*/
+				devId := deviceHeaders[index]
+				imei := devId + "imei"
 
+				intWh, err := strconv.Atoi(valueWh)
+				if err != nil {
+					fmt.Println("Error parsing value:", err)
+					continue
+				}
 				row = append(row, valueWh)
-				//ok, _ := sendServer.SendMessage(deviceHeaders[j], parsedTime, intWh)
-				//if ok {
-				//update lastSent value at imei = timestamp
-				//}
+
+				if cache.hasSent(imei, parsedTime) {
+					continue
+				}
+				ok, _ := d.server.SendPowerValue(imei, parsedTime, intWh)
+				if ok {
+					cache.updateSent(imei, parsedTime)
+				}
 			}
 			filteredData = append(filteredData, row)
 		}
@@ -66,40 +144,6 @@ func (C CSVData) FilterEnergyConsumption(parsed [][]string, savePath string) err
 
 	SaveCSV(savePath, filteredData)
 	return nil
-}
-
-func createMonthCSV(name string) ([][]string, error) {
-	f, _ := os.ReadFile(name)
-	if len(f) > 0 {
-		fmt.Println("File already exists")
-		return nil, nil
-	}
-
-	fmt.Println("Creating file")
-	file, err := os.Create(name)
-	if err != nil {
-		panic(err)
-	}
-
-	writer := csv.NewWriter(file)
-	defer func() {
-		err := file.Close()
-		if err != nil {
-			fmt.Println("Error closing file:", err)
-		}
-		writer.Flush()
-	}()
-
-	dateCols := [][]string{[]string{"Día"}}
-	for i := 1; i <= 31; i++ {
-		date := []string{fmt.Sprintf("%d", i)}
-		dateCols = append(dateCols, date)
-	}
-	err = writer.WriteAll(dateCols)
-	if err != nil {
-		panic(err)
-	}
-	return dateCols, nil
 }
 
 func ReadCSV(name string, comma rune) ([][]string, error) {

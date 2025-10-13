@@ -14,8 +14,9 @@ download (){
   local URL="$1"
   local TOKEN="$2"
   local FILENAME="$3"
-  local last_date="$(date --date='8 hours ago' +%Y-%m-%dT%H:%M)"
-  local current_date="$(date +%Y-%m-%dT%H:%M)"
+  local last_date, current_date
+  last_date="$(date --date='8 hours ago' +%Y-%m-%dT%H:%M)"
+  current_date="$(date +%Y-%m-%dT%H:%M)"
   curl -k "$URL/csv?start_date=$last_date&end_date=$current_date" \
     -H "Accept: text/csv, /" \
     -H "Authorization:  Bearer $TOKEN" \
@@ -31,12 +32,15 @@ download (){
 PANEL_USERS="$(bws secret get f2db263d-b244-482d-a37f-b3640162669d | jq -r '.value')"
 PANEL_PASS="$(bws secret get 62b15eba-9580-4792-8658-b36401628dc4 | jq -r '.value')"
 PANEL_URLS="$(bws secret get 4aa7f245-6764-4820-8ebb-b3640161a5c7 | jq -r '.value')"
-export CSV_INPUT_PATH="/home/panel/csv-input"
-export CSV_SAVE_PATH="/home/panel/csv-save"
 
 readarray -t urls <<< "$PANEL_URLS"
 readarray -t psws <<< "$PANEL_PASS"
 readarray -t users <<< "$PANEL_USERS"
+
+if [ -z "$CSV_INPUT_PATH" ]; then
+  echo "CSV_INPUT_PATH not set" >&2
+  exit 1
+fi
 
 i=0
 if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] && [ "${#urls[@]}" -gt 0 ]; then

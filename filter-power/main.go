@@ -15,6 +15,6 @@ func main() {
 		inputDir = "csv-input"
 	}
 
-	csvData := CSVData{saveComma: ',', inComma: ';'}
-	GetEnergyCSV(csvData, inputDir, saveDir)
+	dataSource := PowerData{saveComma: ',', inComma: ';'}
+	FilterPower(dataSource, inputDir, saveDir)
 }
