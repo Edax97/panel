@@ -41,6 +41,7 @@ if [ -z "$CSV_INPUT_PATH" ]; then
   echo "CSV_INPUT_PATH not set" >&2
   exit 1
 fi
+rm "$CSV_INPUT_PATH/*"
 
 i=0
 if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] && [ "${#urls[@]}" -gt 0 ]; then

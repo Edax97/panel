@@ -10,8 +10,7 @@ RequiresMountsFor=/run/user/1000/containers
 Type=oneshot
 RemainAfterExit=no
 TimeoutStopSec=180
-ExecStart=/home/panel/save-energy.sh
-ExecStop=/usr/bin/podman pod stop cloud-pod
+ExecStart=/home/panel/app/upload-power.sh
 TimeoutStartSec=0
 
 [Install]
