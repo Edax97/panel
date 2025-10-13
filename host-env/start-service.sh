@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
-mkdir -p /home/panel/app
-cp ./* /home/panel/app
-cd /home/panel/app || exit
-go build -o filter-power /home/panel/panel/filter-power
+APP_DIR="/home/panel/app"
+mkdir -p "$APP_DIR"
+cp ./* "$APP_DIR"
+cd "$APP_DIR" || exit
+
+cd /home/panel/panel/filter-power || exit
+go build -o "$APP_DIR/filter-power" .
+cd "APP_DIR" || exit
+
 sudo chmod +x get-device-info.sh upload-power.sh
 mkdir -p csv-input csv-save
 
