@@ -37,6 +37,7 @@ func FilterPower(store CSVSource, inputDir string, saveDir string) {
 				wg.Done()
 			}()
 			if !strings.HasSuffix(f, ".csv") {
+				fmt.Println("Ignoring file", f)
 				return
 			}
 			data, err := store.ReadCSVPower(inputDir + "/" + f)

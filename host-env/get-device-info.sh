@@ -14,18 +14,20 @@ download (){
   local URL="$1"
   local TOKEN="$2"
   local FILENAME="$3"
-  local FROM, TO
-  FROM="$(date --date='4 hours ago' +%Y-%m-%dT%H:%M)"
+  local FROM
+  local TO
+  FROM="$(date --date='1 hour ago' +%Y-%m-%dT%H:%M)"
   TO="$(date +%Y-%m-%dT%H:%M)"
   curl -k "$URL/csv?start_date=$FROM&end_date=$TO" \
-    -H "Accept: text/csv, /" \
+    -H "Accept: text/csv, */*" \
+    -H "Accept-Encoding: gzip, deflate" \
     -H "Authorization:  Bearer $TOKEN" \
-    -H 'Connection: keep-alive' \
     -H "Referer: $URL/public/settings/equipment-management/local-export" \
     -H 'Sec-Fetch-Dest: empty' \
     -H 'Sec-Fetch-Mode: cors' \
     -H 'Sec-Fetch-Site: same-origin' \
     -H 'Sec-GPC: 1' \
+    --compressed \
     --output "$FILENAME" --fail
 }
 
@@ -42,17 +44,20 @@ if [ -z "$CSV_INPUT_PATH" ]; then
   exit 1
 fi
 
+rm -r "$CSV_INPUT_PATH"
+mkdir -p "$CSV_INPUT_PATH"
+
 i=0
 if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] && [ "${#urls[@]}" -gt 0 ]; then
   for i in "${!urls[@]}"; do
     url="${urls[i]}"
     pass="${psws[i]}"
     user="${users[i]}"
-    echo "- $url $user $pass"
+    echo ">> Log in..."
     if [ -n "$url" ] && [ -n "$user" ] && [ -n "$pass" ]; then
       token=$(login "$url" "$user" "$pass")
       if [ -n "$token" ]; then
-        echo "Saving to $CSV_INPUT_PATH, with Token $token"
+        echo ">> Downloading..."
         download "$url" "$token" "$CSV_INPUT_PATH/data_$i.csv"
       else
         echo "No se pudo obtener token: $url" >&2
