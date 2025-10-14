@@ -44,8 +44,8 @@ if [ -z "$CSV_INPUT_PATH" ]; then
   exit 1
 fi
 
+rm -r "$CSV_INPUT_PATH" || echo "Creating dir..."
 mkdir -p "$CSV_INPUT_PATH"
-rm -r "${CSV_INPUT_PATH:?}/*"
 
 i=0
 if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] && [ "${#urls[@]}" -gt 0 ]; then
