@@ -12,7 +12,7 @@ sudo chmod +x get-device-info.sh upload-power.sh
 mkdir -p csv-input csv-save
 
 # Systemd services
-#cp save-energy.service save-energy.timer .config/systemd/user/
+#cp service-upload.service service-upload.timer .config/systemd/user/
 #systemctl --user daemon-reload
-#systemctl enable --user save-energy.timer
-#systemctl start --user save-energy.timer
+#systemctl enable --user service-upload.timer
+#systemctl start --user service-upload.timer

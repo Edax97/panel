@@ -4,13 +4,12 @@ Wants=network.target
 After=network.target
 StartLimitBurst=3
 StartLimitIntervalSec=60
-RequiresMountsFor=/run/user/1000/containers
 
 [Service]
 Type=oneshot
 RemainAfterExit=no
 TimeoutStopSec=180
-ExecStart=/home/panel/app/upload-power.sh
+ExecStart=/home/panel/app/get-device-upload.sh
 TimeoutStartSec=0
 
 [Install]

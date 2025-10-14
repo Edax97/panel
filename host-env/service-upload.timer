@@ -1,8 +1,8 @@
 [Unit]
-Description=Run save-energy every 6 hours
+Description=Run device-upload every 1 hour
 
 [Timer]
-OnCalendar=*-*-* 01/6:30:00
+OnCalendar=*-*-* *:10:00
 Persistent=true
 OnBootSec=60
 Unit=save-energy.service
