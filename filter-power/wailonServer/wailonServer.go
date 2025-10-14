@@ -2,7 +2,6 @@ package wailonServer
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"time"
 )
@@ -33,19 +32,19 @@ func (s *WailonServer) SendTimeValue(imei string, date time.Time, value int) (bo
 	if err != nil {
 		return false, err
 	}
-	log.Println("* Login: ", res)
+	fmt.Println("- Login: ", res)
 
-	//date ddmmyy 02012006
-	//time hhmmss 150405
-	hourStr := date.Format("2006.01.02.15.04")
-	data := fmt.Sprintf("time:3:%s,wh:1:%d;", hourStr, value)
-	message := fmt.Sprintf("NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;;NA;%s", data)
+	//ddmmyy;hhmmss
+	dateStr := date.Format("020106")
+	timeStr := date.Format("150405")
+	data := fmt.Sprintf("time:3:%s,wh:1:%d;", dateStr+"."+timeStr, value)
+	message := fmt.Sprintf("%s;%s;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;;NA;%s", dateStr, timeStr, data)
 	CRC = crcChecksum([]byte(message))
-	log.Println("* Data: ", message)
+	fmt.Println("- Data: ", message)
 	res, err = writePacket(fmt.Sprintf("#D#%s%s\r\n", message, CRC), conn)
 	if err != nil {
 		return false, err
 	}
-	log.Println("* Res: ", res)
+	fmt.Println("- Res: ", res)
 	return true, nil
 }

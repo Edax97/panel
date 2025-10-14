@@ -97,7 +97,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, savePath string) error {
 				//if cache.hasSent(imei, parsedTime) {
 				//	continue
 				//}
-				fmt.Printf(">> Sending to IMEI: %d | ID: %s | time %s\n", imei, id, timestamp)
+				fmt.Printf("\n>>Sending to IMEI: %d | ID: %s | time %s\n", imei, id, timestamp)
 				ok, _ := d.server.SendTimeValue(fmt.Sprintf("%d", imei), parsedTime, v)
 				data.data = append(data.data, fmt.Sprintf("%s: %d", timestamp, v))
 				// CACHE
