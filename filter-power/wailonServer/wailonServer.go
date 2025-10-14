@@ -35,8 +35,8 @@ func (s *WailonServer) SendTimeValue(imei string, date time.Time, value int) (bo
 	fmt.Println("- Login: ", res)
 
 	//ddmmyy;hhmmss
-	dateStr := date.Format("020106")
-	timeStr := date.Format("150405")
+	dateStr := date.UTC().Format("020106")
+	timeStr := date.UTC().Format("150405")
 	data := fmt.Sprintf("time:3:%s,wh:1:%d;", dateStr+"."+timeStr, value)
 	message := fmt.Sprintf("%s;%s;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;;NA;%s", dateStr, timeStr, data)
 	CRC = crcChecksum([]byte(message))
