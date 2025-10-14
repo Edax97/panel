@@ -44,8 +44,8 @@ if [ -z "$CSV_INPUT_PATH" ]; then
   exit 1
 fi
 
-rm -r "$CSV_INPUT_PATH"
 mkdir -p "$CSV_INPUT_PATH"
+rm -r "$CSV_INPUT_PATH"
 
 i=0
 if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] && [ "${#urls[@]}" -gt 0 ]; then
@@ -53,12 +53,12 @@ if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] &
     url="${urls[i]}"
     pass="${psws[i]}"
     user="${users[i]}"
-    echo ">> Log in..."
+    echo ">> Log in to $url"
     if [ -n "$url" ] && [ -n "$user" ] && [ -n "$pass" ]; then
       token=$(login "$url" "$user" "$pass")
       if [ -n "$token" ]; then
-        echo ">> Downloading..."
-        download "$url" "$token" "$CSV_INPUT_PATH/data_$i.csv"
+        echo ">> Downloading device data $(i+1)..."
+        download "$url" "$token" "$CSV_INPUT_PATH/data_$(i+1).csv"
       else
         echo "No se pudo obtener token: $url" >&2
       fi
