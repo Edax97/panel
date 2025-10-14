@@ -21,6 +21,7 @@ download (){
   curl -k "$URL/csv?start_date=$FROM&end_date=$TO" \
     -H "Accept: text/csv, */*" \
     -H "Accept-Encoding: gzip, deflate" \
+    -H "Connection: keep-alive" \
     -H "Authorization:  Bearer $TOKEN" \
     -H "Referer: $URL/public/settings/equipment-management/local-export" \
     -H 'Sec-Fetch-Dest: empty' \

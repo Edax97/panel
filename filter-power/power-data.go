@@ -62,7 +62,8 @@ func (d PowerData) FilterPowerData(parsed [][]string, savePath string) error {
 	imeiMap := os.Getenv("IMEI_MAP")
 	for _, line := range strings.Split(imeiMap, "\n") {
 		v := strings.Split(line, ",")
-		id, imei := v[0], v[1]
+		id, imei := v[0], v[2]
+
 		dat, ok := devicePowerData[id]
 		if ok {
 			dat.imei = imei
@@ -79,7 +80,10 @@ func (d PowerData) FilterPowerData(parsed [][]string, savePath string) error {
 		if parsedTime.Minute() == 0 {
 			fmt.Println(timestamp)
 			for id, data := range devicePowerData {
-				imei, err := strconv.Atoi(data.imei)
+				imeiParsed, err := strconv.Atoi(data.imei)
+
+				imei := fmt.Sprintf("%d", 1e15+imeiParsed)[1:]
+			
 				if err != nil {
 					continue
 				}

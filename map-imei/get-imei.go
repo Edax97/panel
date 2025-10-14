@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -11,7 +12,7 @@ var imeiMap = make(map[string]string)
 var imeiList = make([][]string, 1)
 
 func main() {
-	imeiList[0] = []string{"ID", "NAME", "PANEL", "IMEI"}
+	imeiList[0] = []string{"ID", "NAME", "IMEI"}
 	InputDir := os.Args[1]
 	ImeiFile := os.Args[2]
 
@@ -20,6 +21,7 @@ func main() {
 
 	files, _ := os.ReadDir(InputDir)
 
+	fmt.Println(len(files))
 	for _, file := range files {
 		if file.IsDir() {
 			continue
@@ -32,18 +34,22 @@ func main() {
 				wg.Done()
 			}()
 			mutex.Lock()
-			fileData, err := readCSV(InputDir+"/"+f, ',')
+			fileData, err := readCSV(InputDir+"/"+f, ';')
 			if err != nil {
 				log.Panic(err)
 			}
-			ids := fileData[0][1:]
-			names := fileData[1][1:]
+			devs := fileData[1][1:]
+			names := fileData[2][1:]
 
-			for j, id := range ids {
+			for j, d := range devs {
 				name := names[j]
+				if !strings.HasSuffix(d, "WHr_I") && !strings.HasSuffix(d, "WHr_O") {
+					continue
+				}
+				id := fmt.Sprintf("%s_%s", f, d)
 				_, ok := imeiMap[id]
 				if !ok {
-					imeiList = append(imeiList, []string{id, name, f, ""})
+					imeiList = append(imeiList, []string{id, name, ""})
 					imeiMap[id] = name
 				}
 			}
