@@ -57,8 +57,8 @@ if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] &
     if [ -n "$url" ] && [ -n "$user" ] && [ -n "$pass" ]; then
       token=$(login "$url" "$user" "$pass")
       if [ -n "$token" ]; then
-        echo ">> Downloading device data $(i+1)..."
-        download "$url" "$token" "$CSV_INPUT_PATH/data_$(i+1).csv"
+        echo ">> Downloading device data $(( i+1 ))..."
+        download "$url" "$token" "$CSV_INPUT_PATH/data_$(( i+1 )).csv"
       else
         echo "No se pudo obtener token: $url" >&2
       fi
