@@ -44,7 +44,7 @@ if [ -z "$CSV_INPUT_PATH" ]; then
   exit 1
 fi
 
-rm -r "$CSV_INPUT_PATH" || echo "Creating dir..."
+rm -r "$CSV_INPUT_PATH" 2>/dev/null || echo "Creating dir..."
 mkdir -p "$CSV_INPUT_PATH"
 
 i=0
