@@ -23,9 +23,10 @@ func (d PowerData) ReadCSVPower(fileName string) ([][]string, error) {
 	return ReadCSV(fileName, d.inComma)
 }
 
-func (d PowerData) FilterPowerData(parsed [][]string, savePath string) error {
+func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) error {
 	// CACHE
 	//cache := NewSentCache("sent-value.gob")
+	savePath := fmt.Sprintf("%s/f_%s", dir, file)
 	fmt.Println("Filtering power", savePath)
 	deviceHeaders := parsed[1]
 	fieldHeaders := parsed[4][1:]
@@ -39,7 +40,8 @@ func (d PowerData) FilterPowerData(parsed [][]string, savePath string) error {
 	for i, field := range fieldHeaders {
 		// WHAT FIELD TO SEND
 		if field == "Total Received Active Energy" || field == "Total Delivered Active Energy" {
-			id := strings.Replace(deviceHeaders[i+1], "_I", "_O", 1)
+			id := strings.Replace(deviceHeaders[i+1], "_O", "_I", 1)
+			id = fmt.Sprintf("%s_%s", file, id)
 			devData, ok := devicePowerData[id]
 			if !ok {
 				devicePowerData[id] = &struct {
@@ -83,7 +85,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, savePath string) error {
 				imeiParsed, err := strconv.Atoi(data.imei)
 
 				imei := fmt.Sprintf("%d", 1e15+imeiParsed)[1:]
-			
+
 				if err != nil {
 					continue
 				}

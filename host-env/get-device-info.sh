@@ -16,7 +16,7 @@ download (){
   local FILENAME="$3"
   local FROM
   local TO
-  FROM="$(date --date='1 hour ago' +%Y-%m-%dT%H:%M)"
+  FROM="$(date --date="1 hour ago" +%Y-%m-%dT%H:%M)"
   TO="$(date +%Y-%m-%dT%H:%M)"
   curl -k "$URL/csv?start_date=$FROM&end_date=$TO" \
     -H "Accept: text/csv, */*" \
@@ -40,13 +40,10 @@ readarray -t urls <<< "$PANEL_URLS"
 readarray -t psws <<< "$PANEL_PASS"
 readarray -t users <<< "$PANEL_USERS"
 
-if [ -z "$CSV_INPUT_PATH" ]; then
-  echo "CSV_INPUT_PATH not set" >&2
-  exit 1
-fi
+DATA_DIR="$1"
 
-rm -r "$CSV_INPUT_PATH" 2>/dev/null || echo "Creating dir..."
-mkdir -p "$CSV_INPUT_PATH"
+rm -r "$DATA_DIR" 2>/dev/null || echo "Creating dir..."
+mkdir -p "$DATA_DIR"
 
 i=0
 if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] && [ "${#urls[@]}" -gt 0 ]; then
@@ -59,7 +56,7 @@ if [ "${#urls[@]}" -eq "${#psws[@]}" ] && [ "${#urls[@]}" -eq "${#users[@]}" ] &
       token=$(login "$url" "$user" "$pass")
       if [ -n "$token" ]; then
         echo ">> Downloading device data $(( i+1 ))..."
-        download "$url" "$token" "$CSV_INPUT_PATH/data_$(( i+1 )).csv"
+        download "$url" "$token" "$DATA_DIR/data_$(( i+1 )).csv"
       else
         echo "No se pudo obtener token: $url" >&2
       fi

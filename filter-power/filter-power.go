@@ -14,7 +14,7 @@ type ComServer interface {
 
 type CSVSource interface {
 	ReadCSVPower(fileName string) ([][]string, error)
-	FilterPowerData(data [][]string, savePath string) error
+	FilterPowerData(data [][]string, dir string, file string) error
 }
 
 func FilterPower(store CSVSource, inputDir string, saveDir string) {
@@ -42,8 +42,7 @@ func FilterPower(store CSVSource, inputDir string, saveDir string) {
 			}
 			data, err := store.ReadCSVPower(inputDir + "/" + f)
 			PanicError(err)
-			savePath := fmt.Sprintf("%s/f_%s", saveDir, f)
-			err = store.FilterPowerData(data, savePath)
+			err = store.FilterPowerData(data, saveDir, f)
 			PanicError(err)
 		}(file.Name())
 	}
