@@ -46,9 +46,7 @@ func (s *WailonServer) SendTimeValue(imei string, date time.Time, value int) (bo
 		return false, err
 	}
 	//#AD#1
-	status := strings.Split(res+"#.#.", "#")[2]
-	if status != "1\n" {
-		fmt.Println("Error sending data:", status)
+	if strings.Contains(res, "#AD#1") {
 		return false, fmt.Errorf("IMEI %s, (%s, %s)", imei, message, res)
 	}
 	//fmt.Println("- Res: ", res)
