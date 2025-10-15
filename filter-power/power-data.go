@@ -90,7 +90,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 			for _, data := range devicePowerData {
 				imeiParsed, err := strconv.Atoi(data.imei)
 				if err != nil {
-					fmt.Println("Error parsing IMEI:", err)
+					//fmt.Println("Error parsing IMEI:", err)
 					continue
 				}
 				imei := fmt.Sprintf("%d", 1e15+imeiParsed)[1:]
