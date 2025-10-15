@@ -32,18 +32,23 @@ func (s *WailonServer) SendTimeValue(imei string, date time.Time, value int) (bo
 	if err != nil {
 		return false, err
 	}
-	fmt.Println("- Login: ", res)
+	//fmt.Println("- Login: ", res)
 
 	//ddmmyy;hhmmss
 	datetimeStr := date.Format("2006.01.02.15.04.05")
 	data := fmt.Sprintf("time:3:%s,wh:1:%d;", datetimeStr, value)
 	message := fmt.Sprintf("NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;;NA;%s", data)
 	CRC = crcChecksum([]byte(message))
-	fmt.Println("- Data: ", message)
+	//fmt.Println("- Data: ", message)
 	res, err = writePacket(fmt.Sprintf("#D#%s%s\r\n", message, CRC), conn)
 	if err != nil {
 		return false, err
 	}
+	//#AD#1
+	//status := strings.Split(res, "#")[2]
+	//if status != "1" {
+	//	return false, fmt.Errorf("IMEI %s, (%s, %s)", imei, message, res)
+	//}
 	fmt.Println("- Res: ", res)
 	return true, nil
 }

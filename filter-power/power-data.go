@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -27,7 +29,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 	// CACHE
 	//cache := NewSentCache("sent-value.gob")
 	savePath := fmt.Sprintf("%s/f_%s", dir, file)
-	fmt.Println("Filtering power", savePath)
+	//fmt.Println("Uploading data: ", file)
 	deviceHeaders := parsed[1]
 	fieldHeaders := parsed[4][1:]
 	devicePowerData := make(map[string]*struct {
@@ -80,9 +82,13 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 			continue
 		}
 		if parsedTime.Minute() == 0 {
-			fmt.Println(timestamp)
+			fmt.Println("\nAt ", timestamp)
 			count := 0
-			for id, data := range devicePowerData {
+			// Concurrently send devs
+			var wg sync.WaitGroup
+			var mutex sync.Mutex
+			wg.Add(len(devicePowerData))
+			for _, data := range devicePowerData {
 				imeiParsed, err := strconv.Atoi(data.imei)
 				if err != nil {
 					continue
@@ -102,17 +108,25 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 				//if cache.hasSent(imei, parsedTime) {
 				//	continue
 				//}
-				fmt.Printf("\n>>Sending to IMEI: %s | ID: %s | time %s\n",
-					imei, id, timestamp)
-				ok, _ := d.server.SendTimeValue(imei, parsedTime, v)
-				data.data = append(data.data, fmt.Sprintf("%s: %d", timestamp, v))
+				//fmt.Printf("\n>>Sending to IMEI: %s | ID: %s | time %s\n",
+				//	imei, id, timestamp)
+				go func(imei string, v int) {
+					defer wg.Done()
+					ok, err := d.server.SendTimeValue(imei, parsedTime, v)
+					if !ok {
+						log.Printf("Error: %s", err)
+						return
+					}
+					mutex.Lock()
+					defer mutex.Unlock()
+					count++
+					data.data = append(data.data, fmt.Sprintf("%s: %d", timestamp, v))
+				}(imei, v)
 				// CACHE
-				if ok {
-					//	cache.updateSent(imei, parsedTime)
-				}
+				//	cache.updateSent(imei, parsedTime)
 			}
-			fmt.Printf("Devices sent: %d\n", count)
-			fmt.Printf("Total devices: %d\n", len(devicePowerData))
+			wg.Wait()
+			fmt.Printf("> Panel %s | Time (%s) | Sent %d/%d\n", file, timestamp, count, len(devicePowerData))
 		}
 	}
 

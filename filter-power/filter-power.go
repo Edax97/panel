@@ -20,7 +20,6 @@ type CSVSource interface {
 func FilterPower(store CSVSource, inputDir string, saveDir string) {
 
 	var wg sync.WaitGroup
-	var mutex sync.Mutex
 
 	files, err := os.ReadDir(inputDir)
 	PanicError(err)
@@ -31,9 +30,7 @@ func FilterPower(store CSVSource, inputDir string, saveDir string) {
 		}
 		wg.Add(1)
 		go func(f string) {
-			mutex.Lock()
 			defer func() {
-				mutex.Unlock()
 				wg.Done()
 			}()
 			if !strings.HasSuffix(f, ".csv") {
