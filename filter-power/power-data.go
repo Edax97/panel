@@ -81,14 +81,13 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 		}
 		if parsedTime.Minute() == 0 {
 			fmt.Println(timestamp)
+			count := 0
 			for id, data := range devicePowerData {
 				imeiParsed, err := strconv.Atoi(data.imei)
-
-				imei := fmt.Sprintf("%d", 1e15+imeiParsed)[1:]
-
 				if err != nil {
 					continue
 				}
+				imei := fmt.Sprintf("%d", 1e15+imeiParsed)[1:]
 
 				v := getAtIndex(record, data.i)
 				w := getAtIndex(record, data.j)
@@ -112,6 +111,8 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 					//	cache.updateSent(imei, parsedTime)
 				}
 			}
+			fmt.Printf("Devices sent: %d\n", count)
+			fmt.Printf("Total devices: %d\n", len(devicePowerData))
 		}
 	}
 
