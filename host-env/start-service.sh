@@ -12,7 +12,7 @@ sudo chmod +x get-device-info.sh upload-power.sh
 mkdir -p csv-input csv-save
 
 # Systemd services
-#cp device-upload.service device-upload.timer /home/panel/.config/systemd/user/
-#systemctl --user daemon-reload
-#systemctl enable --user device-upload.timer
-#systemctl start --user device-upload.timer
+#cp device-upload.service device-upload.timer /etc/systemd/system/
+#systemctl daemon-reload
+#systemctl enable device-upload.timer
+#systemctl start device-upload.timer

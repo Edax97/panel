@@ -8,7 +8,7 @@ login (){
   local res
   res="$(curl -k -X POST "$URL" \
     -H "Content-Type: application/json" \
-    --retry 2 --retry-delay 2 --retry-all-erros \
+    --retry 2 --retry-delay 2 --retry-all-errors \
     -d "$PAYLOAD")"
   jq -r '.AccessToken."access_token"' <<< "$res"
 }
@@ -31,7 +31,7 @@ download (){
     -H 'Sec-Fetch-Site: same-origin' \
     -H 'Sec-GPC: 1' \
     --compressed \
-    --retry 3 --retry-delay 2 --retry-all-erros \
+    --retry 3 --retry-delay 2 --retry-all-errors \
     --output "$FILENAME" --fail
 }
 
