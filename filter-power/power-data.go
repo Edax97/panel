@@ -96,15 +96,16 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 					v = w
 				}
 				if v < 0 {
-					continue
+					v = 0
 				}
 
 				// CACHE
 				//if cache.hasSent(imei, parsedTime) {
 				//	continue
 				//}
-				fmt.Printf("\n>>Sending to IMEI: %s | ID: %s | time %s\n", imei, id, timestamp)
-				ok, _ := d.server.SendTimeValue(fmt.Sprintf("%s", imei), parsedTime, v)
+				fmt.Printf("\n>>Sending to IMEI: %s | ID: %s | time %s\n",
+					imei, id, timestamp)
+				ok, _ := d.server.SendTimeValue(imei, parsedTime, v)
 				data.data = append(data.data, fmt.Sprintf("%s: %d", timestamp, v))
 				// CACHE
 				if ok {
