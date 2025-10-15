@@ -82,7 +82,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 			continue
 		}
 		if parsedTime.Minute() == 0 {
-			fmt.Println("\nAt ", timestamp)
+			//fmt.Println("\nAt ", timestamp)
 			count := 0
 			// Concurrently send devs
 			var wg sync.WaitGroup
@@ -127,7 +127,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 				//	cache.updateSent(imei, parsedTime)
 			}
 			wg.Wait()
-			//fmt.Printf("> Panel %s | Time (%s) | Sent %d/%d\n", file, timestamp, count, len(devicePowerData))
+			fmt.Printf("> Panel %s | Time (%s) | Sent %d/%d\n", file, timestamp, count, len(devicePowerData))
 		}
 	}
 
