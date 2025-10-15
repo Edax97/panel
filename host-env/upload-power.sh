@@ -15,7 +15,7 @@ if [ -z "$CSV_INPUT" ] || [ -z "$CSV_FILTER" ]; then
 fi
 mkdir -p "$CSV_INPUT" "$CSV_FILTER"
 
-filter-power "$CSV_INPUT" "$CSV_FILTER" || {
+./filter-power "$CSV_INPUT" "$CSV_FILTER" || {
   echo "Filter and upload power data failed"; exit 1
 }
 
