@@ -13,7 +13,7 @@ if [ -z "$CSV_INPUT" ] || [ -z "$CSV_FILTER" ]; then
   echo "CSV_INPUT|UPLOAD_PATH not set" >&2
   exit 1
 fi
-mkdir -p "$CSV_INPUT" "$CSV_FILTER"
+mkdir -p "$CSV_FILTER"
 
 ./filter-power "$CSV_INPUT" "$CSV_FILTER" || {
   echo "Filter and upload power data failed"; exit 1

@@ -5,8 +5,10 @@ login (){
   local USER="$2"
   local PASS="$3"
   local PAYLOAD="{\"scheme\":\"BASIC\",\"user\":\"$USER\",\"password\":\"$PASS\"}"
-  local res="$(curl -k -X POST "$URL" \
+  local res
+  res="$(curl -k -X POST "$URL" \
     -H "Content-Type: application/json" \
+    --retry 2 --retry-delay 2 --retry-all-erros \
     -d "$PAYLOAD")"
   jq -r '.AccessToken."access_token"' <<< "$res"
 }
@@ -29,6 +31,7 @@ download (){
     -H 'Sec-Fetch-Site: same-origin' \
     -H 'Sec-GPC: 1' \
     --compressed \
+    --retry 3 --retry-delay 2 --retry-all-erros \
     --output "$FILENAME" --fail
 }
 

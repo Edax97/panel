@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-cd ~/app || exit
+cd /home/panel/app || exit
 
 export CSV_INPUT_PATH="/home/panel/csv-input"
 export CSV_UPLOAD_PATH="/home/panel/csv-save"

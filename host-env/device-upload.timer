@@ -5,7 +5,7 @@ Description=Run device-upload every 1 hour
 OnCalendar=*-*-* *:10:00
 Persistent=true
 OnBootSec=60
-Unit=save-energy.service
+Unit=device-upload.service
 
 [Install]
 WantedBy=timers.target

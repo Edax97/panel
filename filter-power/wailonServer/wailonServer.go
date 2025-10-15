@@ -3,6 +3,7 @@ package wailonServer
 import (
 	"fmt"
 	"net"
+	"strings"
 	"time"
 )
 
@@ -28,7 +29,7 @@ func (s *WailonServer) SendTimeValue(imei string, date time.Time, value int) (bo
 	login := fmt.Sprintf("2.0;%s;NA;", imei)
 	CRC := crcChecksum([]byte(login))
 
-	res, err := writePacket(fmt.Sprintf("#L#%s%s\r\n", login, CRC), conn)
+	_, err = writePacket(fmt.Sprintf("#L#%s%s\r\n", login, CRC), conn)
 	if err != nil {
 		return false, err
 	}
@@ -40,15 +41,15 @@ func (s *WailonServer) SendTimeValue(imei string, date time.Time, value int) (bo
 	message := fmt.Sprintf("NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;;NA;%s", data)
 	CRC = crcChecksum([]byte(message))
 	//fmt.Println("- Data: ", message)
-	res, err = writePacket(fmt.Sprintf("#D#%s%s\r\n", message, CRC), conn)
+	res, err := writePacket(fmt.Sprintf("#D#%s%s\r\n", message, CRC), conn)
 	if err != nil {
 		return false, err
 	}
 	//#AD#1
-	//status := strings.Split(res, "#")[2]
-	//if status != "1" {
-	//	return false, fmt.Errorf("IMEI %s, (%s, %s)", imei, message, res)
-	//}
-	fmt.Println("- Res: ", res)
+	status := strings.Split(res+"##", "#")[2]
+	if status != "1" {
+		return false, fmt.Errorf("IMEI %s, (%s, %s)", imei, message, res)
+	}
+	//fmt.Println("- Res: ", res)
 	return true, nil
 }
