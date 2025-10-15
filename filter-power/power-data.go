@@ -29,7 +29,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 	// CACHE
 	//cache := NewSentCache("sent-value.gob")
 	savePath := fmt.Sprintf("%s/f_%s", dir, file)
-	//fmt.Println("Uploading data: ", file)
+	fmt.Println("Uploading data: ", file)
 	deviceHeaders := parsed[1]
 	fieldHeaders := parsed[4][1:]
 	devicePowerData := make(map[string]*struct {
@@ -82,7 +82,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 			continue
 		}
 		if parsedTime.Minute() == 0 {
-			//fmt.Println("\nAt ", timestamp)
+			fmt.Println("\nAt ", timestamp)
 			count := 0
 			// Concurrently send devs
 			var wg sync.WaitGroup
@@ -90,6 +90,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 			for _, data := range devicePowerData {
 				imeiParsed, err := strconv.Atoi(data.imei)
 				if err != nil {
+					fmt.Println("Error parsing IMEI:", err)
 					continue
 				}
 				imei := fmt.Sprintf("%d", 1e15+imeiParsed)[1:]
