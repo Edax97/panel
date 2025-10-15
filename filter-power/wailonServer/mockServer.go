@@ -2,6 +2,7 @@ package wailonServer
 
 import (
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -16,7 +17,7 @@ func (s *MockServer) SendTimeValue(imei string, date time.Time, value int) (bool
 	login := fmt.Sprintf("2.0;%s;NA;", imei)
 	CRC := crcChecksum([]byte(login))
 	loginPacket := fmt.Sprintf("#L#%s%s\r\n", login, CRC)
-	fmt.Printf("  - IMEI: %s\n    LOGIN PACKET: %s\n", imei, loginPacket)
+	log.Printf("  - IMEI: %s\n    LOGIN PACKET: %s\n", imei, loginPacket)
 
 	hourStr := date.Format("2006.01.02.15.04")
 	data := fmt.Sprintf("time:3:%s;WHrecibidos:1:%d;", hourStr, value)
