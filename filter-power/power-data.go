@@ -63,8 +63,8 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 	}
 
 	// Set IMEI at device id
-	//imeiMap := os.Getenv("IMEI_MAP")
-	imeiMap := IMEI_MAP
+	imeiMap := os.Getenv("IMEI_MAP")
+	//imeiMap := IMEI_MAP
 	imeiList := strings.Split(imeiMap, "\n")
 
 	//fmt.Println("Line", imeiMap)
