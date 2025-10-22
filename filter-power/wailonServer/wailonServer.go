@@ -33,7 +33,7 @@ func (s *WailonServer) SendTimeValue(imei string, t time.Time, value int) (bool,
 	if err != nil {
 		return false, err
 	}
-	fmt.Println("- Login: ", res)
+	fmt.Println("- Login: ", login)
 
 	//ddmmyy;hhmmss
 	date := t.Format("020106")
@@ -50,6 +50,6 @@ func (s *WailonServer) SendTimeValue(imei string, t time.Time, value int) (bool,
 	if !strings.Contains(res, "#AD#1") {
 		return false, fmt.Errorf("IMEI %s, (%s, %s)", imei, message, res)
 	}
-	//fmt.Println("- Res: ", res)
+	fmt.Println("- Res: ", res)
 	return true, nil
 }
