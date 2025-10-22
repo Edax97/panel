@@ -43,6 +43,7 @@ func (s *WailonServer) SendTimeValue(imei string, t time.Time, value int) (bool,
 	CRC = crcChecksum([]byte(message))
 	fmt.Println("- Data: ", message)
 	res, err = writePacket(fmt.Sprintf("#D#%s%s\r\n", message, CRC), conn)
+	fmt.Println("- Res: ", res)
 	if err != nil {
 		return false, err
 	}
@@ -50,6 +51,5 @@ func (s *WailonServer) SendTimeValue(imei string, t time.Time, value int) (bool,
 	if !strings.Contains(res, "#AD#1") {
 		return false, fmt.Errorf("IMEI %s, (%s, %s)", imei, message, res)
 	}
-	fmt.Println("- Res: ", res)
 	return true, nil
 }
