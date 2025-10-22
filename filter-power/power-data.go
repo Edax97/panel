@@ -122,7 +122,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 					defer wg.Done()
 					ok, err := d.server.SendTimeValue(IMEI, parsedTime, WH)
 					if !ok {
-						log.Printf("Error: %s", err)
+						log.Printf("Error sending: %s", err)
 						return
 					}
 					mutex.Lock()
