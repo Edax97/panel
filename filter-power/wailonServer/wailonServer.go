@@ -29,11 +29,11 @@ func (s *WailonServer) SendTimeValue(imei string, t time.Time, value int) (bool,
 	login := fmt.Sprintf("2.0;%s;NA;", imei)
 	CRC := crcChecksum([]byte(login))
 
-	_, err = writePacket(fmt.Sprintf("#L#%s%s\r\n", login, CRC), conn)
+	res, err := writePacket(fmt.Sprintf("#L#%s%s\r\n", login, CRC), conn)
 	if err != nil {
 		return false, err
 	}
-	//fmt.Println("- Login: ", res)
+	fmt.Println("- Login: ", res)
 
 	//ddmmyy;hhmmss
 	date := t.Format("020106")
@@ -41,8 +41,8 @@ func (s *WailonServer) SendTimeValue(imei string, t time.Time, value int) (bool,
 	data := fmt.Sprintf("time:3:%s/%s,wh:1:%d;", date, second, value)
 	message := fmt.Sprintf("%s;%s.000000000;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;;NA;%s", date, second, data)
 	CRC = crcChecksum([]byte(message))
-	//fmt.Println("- Data: ", message)
-	res, err := writePacket(fmt.Sprintf("#D#%s%s\r\n", message, CRC), conn)
+	fmt.Println("- Data: ", message)
+	res, err = writePacket(fmt.Sprintf("#D#%s%s\r\n", message, CRC), conn)
 	if err != nil {
 		return false, err
 	}
