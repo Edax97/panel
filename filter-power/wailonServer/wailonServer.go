@@ -17,7 +17,7 @@ func NewWailonServer(ip string, port string) *WailonServer {
 	return &WailonServer{ip, port}
 }
 
-func (s *WailonServer) SendTimeValue(imei string, date time.Time, value int) (bool, error) {
+func (s *WailonServer) SendTimeValue(imei string, t time.Time, value int) (bool, error) {
 	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", s.ip, s.port))
 	if err != nil {
 		return false, err
@@ -36,9 +36,10 @@ func (s *WailonServer) SendTimeValue(imei string, date time.Time, value int) (bo
 	//fmt.Println("- Login: ", res)
 
 	//ddmmyy;hhmmss
-	datetimeStr := date.Format("2006-01-02/15-04-05")
-	data := fmt.Sprintf("time:3:%s,wh:1:%d;", datetimeStr, value)
-	message := fmt.Sprintf("NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;;NA;%s", data)
+	date := t.Format("020106")
+	second := t.Format("150405")
+	data := fmt.Sprintf("time:3:%s/%s,wh:1:%d;", date, second, value)
+	message := fmt.Sprintf("%s;%s.000000000;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;;NA;%s", date, second, data)
 	CRC = crcChecksum([]byte(message))
 	//fmt.Println("- Data: ", message)
 	res, err := writePacket(fmt.Sprintf("#D#%s%s\r\n", message, CRC), conn)

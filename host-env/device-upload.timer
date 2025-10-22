@@ -2,7 +2,7 @@
 Description=Run device-upload every 1 hour
 
 [Timer]
-OnCalendar=*-*-* *:10:00
+OnCalendar=*-*-* *:05:00
 Persistent=true
 OnBootSec=60
 Unit=device-upload.service
