@@ -18,8 +18,8 @@ func main() {
 	if inputDir == "" {
 		inputDir = "csv-input"
 	}
-	//ser := wailonServer.NewWailonServer(IP, PORT)
-	ser := wailonServer.NewMockServer()
+	ser := wailonServer.NewWailonServer(IP, PORT)
+	//ser := wailonServer.NewMockServer()
 	d := NewPowerData(ser)
 
 	FilterPower(d, inputDir, saveDir)

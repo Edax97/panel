@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+cd /home/panel/panel/host-env
+
 APP_DIR="/home/panel/app"
 mkdir -p "$APP_DIR"
 cp ./* "$APP_DIR"
