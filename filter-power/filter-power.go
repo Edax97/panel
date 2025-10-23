@@ -38,9 +38,13 @@ func FilterPower(store CSVSource, inputDir string, saveDir string) {
 				return
 			}
 			data, err := store.ReadCSVPower(inputDir + "/" + f)
-			PanicError(err)
+			if err != nil {
+				fmt.Printf("Error: %v", err)
+			}
 			err = store.FilterPowerData(data, saveDir, f)
-			PanicError(err)
+			if err != nil {
+				fmt.Printf("Error: %v", err)
+			}
 		}(file.Name())
 	}
 

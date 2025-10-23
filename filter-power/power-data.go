@@ -30,6 +30,9 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 	//cache := NewSentCache("sent-value.gob")
 	savePath := fmt.Sprintf("%s/f_%s", dir, file)
 	fmt.Println("Uploading data: ", file)
+	if len(parsed) == 0 {
+		return fmt.Errorf("empty file")
+	}
 	deviceHeaders := parsed[1]
 	fieldHeaders := parsed[4][1:]
 	devicePowerData := make(map[string]*struct {
@@ -94,7 +97,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 			// Concurrently send devs
 			var wg sync.WaitGroup
 			var mutex sync.Mutex
-			for _, data := range devicePowerData {
+			for i, data := range devicePowerData {
 				imeiParsed, err := strconv.Atoi(data.imei)
 				if err != nil {
 					//fmt.Println("Error parsing IMEI:", err)
@@ -118,7 +121,7 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 				//fmt.Printf("\n>>Sending to IMEI: %s | ID: %s | time %s\n",
 				//	imei, id, timestamp)
 				wg.Add(1)
-				go func(IMEI string, WH int) {
+				go func(IMEI string, WH int, id string) {
 					defer wg.Done()
 					ok, err := d.server.SendTimeValue(IMEI, parsedTime, WH)
 					if !ok {
@@ -128,8 +131,8 @@ func (d PowerData) FilterPowerData(parsed [][]string, dir string, file string) e
 					mutex.Lock()
 					defer mutex.Unlock()
 					count++
-					data.data = append(data.data, fmt.Sprintf("%s: %d", timestamp, WH))
-				}(imei, v)
+					devicePowerData[i].data = append(devicePowerData[i].data, fmt.Sprintf("%s: %d", timestamp, WH))
+				}(imei, v, i)
 				// CACHE
 				//	cache.updateSent(imei, parsedTime)
 			}
