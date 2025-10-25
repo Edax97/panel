@@ -9,12 +9,13 @@ import (
 )
 
 type ComServer interface {
-	SendTimeValue(imei string, time time.Time, value int) (bool, error)
+	SendTimeValue(imei string, time time.Time, wh string, vah string) (bool, error)
 }
 
 type CSVSource interface {
 	ReadCSVPower(fileName string) ([][]string, error)
-	FilterPowerData(data [][]string, dir string, file string) error
+	SendWHData(data [][]string, dir string, file string) error
+	SendHistoryWH(data [][]string, dir string, file string) error
 }
 
 func FilterPower(store CSVSource, inputDir string, saveDir string) {
@@ -41,7 +42,8 @@ func FilterPower(store CSVSource, inputDir string, saveDir string) {
 			if err != nil {
 				fmt.Printf("Error: %v", err)
 			}
-			err = store.FilterPowerData(data, saveDir, f)
+			//err = store.SendWHData(data, saveDir, f)
+			err = store.SendHistoryWH(data, saveDir, f)
 			if err != nil {
 				fmt.Printf("Error: %v", err)
 			}
