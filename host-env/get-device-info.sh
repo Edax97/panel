@@ -18,7 +18,7 @@ download (){
   local FILENAME="$3"
   local FROM
   local TO
-  FROM="$(date --date="1 hour ago" +%Y-%m-%dT%H:%M)"
+  FROM="$(date --date="84 hour ago" +%Y-%m-%dT%H:%M)"
   TO="$(date +%Y-%m-%dT%H:%M)"
   curl -k "$URL/csv?start_date=$FROM&end_date=$TO" \
     -H "Accept: text/csv, */*" \
