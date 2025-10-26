@@ -42,8 +42,8 @@ func FilterPower(store CSVSource, inputDir string, saveDir string) {
 			if err != nil {
 				fmt.Printf("Error: %v", err)
 			}
-			//err = store.SendWHData(data, saveDir, f)
-			err = store.SendHistoryWH(data, saveDir, f)
+			err = store.SendWHData(data, saveDir, f)
+			//err = store.SendHistoryWH(data, saveDir, f)
 			if err != nil {
 				fmt.Printf("Error: %v", err)
 			}
