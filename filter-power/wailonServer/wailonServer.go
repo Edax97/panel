@@ -36,8 +36,8 @@ func (s *WailonServer) SendTimeValue(imei string, t time.Time, wh string, vah st
 	//fmt.Println("- Login: ", login)
 
 	//ddmmyy;hhmmss
-	date := t.Format("020106")
-	second := t.Format("150405")
+	date := t.In(time.UTC).Format("020106")
+	second := t.In(time.UTC).Format("150405")
 
 	data := fmt.Sprintf("watth:3:%s,varh:3:%s;", wh, vah)
 	message := fmt.Sprintf("%s;%s;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;;NA;%s", date, second, data)

@@ -19,7 +19,7 @@ func (s *MockServer) SendTimeValue(imei string, date time.Time, wh string, vah s
 	loginPacket := fmt.Sprintf("#L#%s%s\r\n", login, CRC)
 	log.Printf("  - IMEI: %s\n    LOGIN PACKET: %s\n", imei, loginPacket)
 
-	hourStr := date.Format("2006.01.02.15.04")
+	hourStr := date.In(time.UTC).Format("2006.01.02.15.04")
 	data := fmt.Sprintf("WH:3:%s,VARH:3:%s;", wh, vah)
 	message := fmt.Sprintf("%s;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;NA;;NA;%s", hourStr, data)
 	CRC = crcChecksum([]byte(message))

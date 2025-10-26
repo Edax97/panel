@@ -179,7 +179,8 @@ func (d PowerData) SendHistoryWH(parsed [][]string, dir string, file string) err
 
 	for _, record := range parsed[6:] {
 		timestamp := record[0]
-		parsedTime, err := time.Parse("2006-01-02 15:04:05", timestamp)
+		loc, _ := time.LoadLocation("America/Lima")
+		parsedTime, err := time.ParseInLocation("2006-01-02 15:04:05", timestamp, loc)
 		if err != nil {
 			fmt.Println("Error parsing time:", err)
 			continue
