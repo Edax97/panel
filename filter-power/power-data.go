@@ -33,6 +33,7 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 	if len(parsed) == 0 {
 		return fmt.Errorf("empty file")
 	}
+	// Id -> wh and var index
 	deviceHeaders := parsed[1]
 	fieldHeaders := parsed[4][1:]
 	idToValues := make(map[string]*struct {
@@ -45,7 +46,7 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 	for i, field := range fieldHeaders {
 		// WHAT FIELD TO SEND
 		if field == "Total Delivered Active Energy" || field == "Total Delivered Reactive Energy" {
-			id := strings.Replace(deviceHeaders[i+1], "_O", "_I", 1)
+			id := strings.Replace(deviceHeaders[i+1], "_VARHr_I", "_WHr_I", 1)
 			id = fmt.Sprintf("%s_%s", file, id)
 			vals, ok := idToValues[id]
 			if !ok {
@@ -66,12 +67,9 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 		}
 	}
 
-	// Set IMEI at device id
+	// Id -> imei
 	imeiMap := os.Getenv("IMEI_MAP")
-	//imeiMap := IMEI_MAP
 	imeiList := strings.Split(imeiMap, "\n")
-
-	//fmt.Println("Line", imeiMap)
 	if len(imeiList) == 0 {
 		return fmt.Errorf("imei file not set")
 	}
@@ -86,27 +84,26 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 
 	for _, record := range parsed[6:] {
 		timestamp := record[0]
-		parsedTime, err := time.Parse("2006/01/02 15:04:05", timestamp)
+		loc, _ := time.LoadLocation("America/Lima")
+		parsedTime, err := time.ParseInLocation("2006/01/02 15:04:05", timestamp, loc)
 		if err != nil {
 			fmt.Println("Error parsing time:", err)
 			continue
 		}
 		if parsedTime.Minute() == 0 {
-			//fmt.Println("\nAt ", timestamp)
 			count := 0
-			// Concurrently send devs
 			var wg sync.WaitGroup
 			var mutex sync.Mutex
-			for id, Imei := range idToValues {
-				imeiParsed, err := strconv.Atoi(Imei.imei)
+			for id, devInfo := range idToValues {
+				imeiParsed, err := strconv.Atoi(devInfo.imei)
 				if err != nil {
 					//fmt.Println("Error parsing IMEI:", err)
 					continue
 				}
 				imei := fmt.Sprintf("%d", 1e15+imeiParsed)[1:]
 
-				wh := getValueAt(record, Imei.colWH)
-				varh := getValueAt(record, Imei.colVAR)
+				wh := getValueAt(record, devInfo.colWH)
+				varh := getValueAt(record, devInfo.colVAR)
 
 				// CACHE
 				//if cache.hasSent(imei, parsedTime) {
