@@ -152,7 +152,7 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 		rvai := []string{id, Imei.imei, "VARH I"}
 		rvai = append(rvai, Imei.dataVAI...)
 		rvao := []string{id, Imei.imei, "VARH O"}
-		rvao = append(rvai, Imei.dataVAO...)
+		rvao = append(rvao, Imei.dataVAO...)
 		filteredData = append(filteredData, rowh, rvai, rvao)
 	}
 
