@@ -9,7 +9,7 @@ import (
 )
 
 type ComServer interface {
-	SendTimeValue(imei string, time time.Time, wh string, vah string) (bool, error)
+	SendTimeValue(imei string, time time.Time, wh string, vai string, vao string) (bool, error)
 }
 
 type CSVSource interface {

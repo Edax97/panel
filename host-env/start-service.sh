@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd /home/panel/panel/host-env
+cd /home/panel/panel/host-env || exit
 
 APP_DIR="/home/panel/app"
 mkdir -p "$APP_DIR"

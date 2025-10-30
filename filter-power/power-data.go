@@ -11,6 +11,21 @@ import (
 	"time"
 )
 
+type MedidorDatos struct {
+	imei    string
+	colWH   int
+	colVAI  int
+	colVAO  int
+	dataWH  []string
+	dataVAI []string
+	dataVAO []string
+}
+
+func NewMedidorDatos() *MedidorDatos {
+	return &MedidorDatos{".", -1, -1, -1,
+		[]string{}, []string{}, []string{}}
+}
+
 type PowerData struct {
 	inComma   rune
 	saveComma rune
@@ -33,36 +48,31 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 	if len(parsed) == 0 {
 		return fmt.Errorf("empty file")
 	}
-	// Id -> wh and var index
+	// Id -> medidor index
 	deviceHeaders := parsed[1]
 	fieldHeaders := parsed[4][1:]
-	idToValues := make(map[string]*struct {
-		imei     string
-		colWH    int
-		colVAR   int
-		dataWH   []string
-		dataVARH []string
-	})
+	idToMedidor := make(map[string]*MedidorDatos)
 	for i, field := range fieldHeaders {
 		// WHAT FIELD TO SEND
-		if field == "Total Delivered Active Energy" || field == "Total Delivered Reactive Energy" {
-			id := strings.Replace(deviceHeaders[i+1], "_VARHr_I", "_WHr_I", 1)
-			id = fmt.Sprintf("%s_%s", file, id)
-			vals, ok := idToValues[id]
+		if field == "Total Delivered Active Energy" ||
+			field == "Total Delivered Reactive Energy" ||
+			field == "Total Received Reactive Energy" {
+			idParts := strings.Split(deviceHeaders[i+1], "_")
+			if len(idParts) < 2 {
+				continue
+			}
+			id := fmt.Sprintf("%s_%s_%s_WHr_I", file, idParts[0], idParts[1])
+			vals, ok := idToMedidor[id]
 			if !ok {
-				idToValues[id] = &struct {
-					imei     string
-					colWH    int
-					colVAR   int
-					dataWH   []string
-					dataVARH []string
-				}{".", -1, -1, []string{}, []string{}}
-				vals = idToValues[id]
+				idToMedidor[id] = NewMedidorDatos()
+				vals = idToMedidor[id]
 			}
 			if field == "Total Delivered Active Energy" {
 				vals.colWH = i + 1
+			} else if field == "Total Delivered Reactive Energy" {
+				vals.colVAI = i + 1
 			} else {
-				vals.colVAR = i + 1
+				vals.colVAO = i + 1
 			}
 		}
 	}
@@ -76,7 +86,7 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 	for _, line := range imeiList {
 		v := strings.Split(line, ",")
 		id, imei := v[0], v[2]
-		dat, ok := idToValues[id]
+		dat, ok := idToMedidor[id]
 		if ok {
 			dat.imei = imei
 		}
@@ -94,7 +104,7 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 			count := 0
 			var wg sync.WaitGroup
 			var mutex sync.Mutex
-			for id, devInfo := range idToValues {
+			for id, devInfo := range idToMedidor {
 				imeiParsed, err := strconv.Atoi(devInfo.imei)
 				if err != nil {
 					//fmt.Println("Error parsing IMEI:", err)
@@ -103,7 +113,8 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 				imei := fmt.Sprintf("%d", 1e15+imeiParsed)[1:]
 
 				wh := getValueAt(record, devInfo.colWH)
-				varh := getValueAt(record, devInfo.colVAR)
+				vai := getValueAt(record, devInfo.colVAI)
+				vao := getValueAt(record, devInfo.colVAO)
 
 				// CACHE
 				//if cache.hasSent(imei, parsedTime) {
@@ -112,9 +123,9 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 				//fmt.Printf("\n>>Sending to IMEI: %s | ID: %s | time %s\n",
 				//	imei, id, timestamp)
 				wg.Add(1)
-				go func(IMEI string, WH string, VARH string, ID string) {
+				go func(IMEI string, ID string, WH string, VAI string, VAO string) {
 					defer wg.Done()
-					ok, err := d.server.SendTimeValue(IMEI, parsedTime, WH, VARH)
+					ok, err := d.server.SendTimeValue(IMEI, parsedTime, WH, VAI, VAO)
 					if !ok {
 						log.Printf("Error sending: %s", err)
 						return
@@ -122,24 +133,27 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 					mutex.Lock()
 					defer mutex.Unlock()
 					count++
-					idToValues[ID].dataWH = append(idToValues[ID].dataWH, fmt.Sprintf("%s: %s", timestamp, WH))
-					idToValues[ID].dataVARH = append(idToValues[ID].dataVARH, fmt.Sprintf("%s: %s", timestamp, VARH))
-				}(imei, wh, varh, id)
+					idToMedidor[ID].dataWH = append(idToMedidor[ID].dataWH, fmt.Sprintf("%s: %s", timestamp, WH))
+					idToMedidor[ID].dataVAI = append(idToMedidor[ID].dataVAI, fmt.Sprintf("%s: %s", timestamp, VAI))
+					idToMedidor[ID].dataVAO = append(idToMedidor[ID].dataVAO, fmt.Sprintf("%s: %s", timestamp, VAO))
+				}(imei, id, wh, vai, vao)
 				// CACHE
 				//	cache.updateSent(imei, parsedTime)
 			}
 			wg.Wait()
-			fmt.Printf("> Panel %s | Time (%s) | Sent %d/%d\n", file, timestamp, count, len(idToValues))
+			fmt.Printf("> Panel %s | Time (%s) | Sent %d/%d\n", file, timestamp, count, len(idToMedidor))
 		}
 	}
 
 	filteredData := [][]string{{"ID", "IMEI", "VARIABLE"}}
-	for id, Imei := range idToValues {
+	for id, Imei := range idToMedidor {
 		rowh := []string{id, Imei.imei, "WH"}
 		rowh = append(rowh, Imei.dataWH...)
-		rvarh := []string{id, Imei.imei, "VARH"}
-		rvarh = append(rvarh, Imei.dataVARH...)
-		filteredData = append(filteredData, rowh, rvarh)
+		rvai := []string{id, Imei.imei, "VARH I"}
+		rvai = append(rvai, Imei.dataVAI...)
+		rvao := []string{id, Imei.imei, "VARH O"}
+		rvao = append(rvai, Imei.dataVAO...)
+		filteredData = append(filteredData, rowh, rvai, rvao)
 	}
 
 	SaveCSV(savePath, filteredData)
@@ -203,7 +217,7 @@ func (d PowerData) SendHistoryWH(parsed [][]string, dir string, file string) err
 				wg.Add(1)
 				go func(IMEI string, WH string, LOC string) {
 					defer wg.Done()
-					ok, err := d.server.SendTimeValue(IMEI, parsedTime, WH, "NaN")
+					ok, err := d.server.SendTimeValue(IMEI, parsedTime, WH, "NaN", "NaN")
 					if !ok {
 						log.Printf("Error sending: %s", err)
 						return
