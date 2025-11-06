@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"filter-power/wailonServer"
 	"fmt"
 	"log"
 	"os"
@@ -42,7 +43,7 @@ func (d PowerData) ReadCSVPower(fileName string) ([][]string, error) {
 
 func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error {
 	// CACHE
-	//cache := NewSentCache("sent-value.gob")
+	cache := wailonServer.NewSentCache(file + "_cache.gob")
 	savePath := fmt.Sprintf("%s/f_%s", dir, file)
 	fmt.Println("Uploading Imei: ", file)
 	if len(parsed) == 0 {
@@ -100,6 +101,10 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 			fmt.Println("Error parsing time:", err)
 			continue
 		}
+		// CACHE
+		if cache.HasSent(file, parsedTime) {
+			continue
+		}
 		if parsedTime.Minute() == 0 {
 			count := 0
 			var wg sync.WaitGroup
@@ -116,12 +121,6 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 				vai := getValueAt(record, devInfo.colVAI)
 				vao := getValueAt(record, devInfo.colVAO)
 
-				// CACHE
-				//if cache.hasSent(imei, parsedTime) {
-				//	continue
-				//}
-				//fmt.Printf("\n>>Sending to IMEI: %s | ID: %s | time %s\n",
-				//	imei, id, timestamp)
 				wg.Add(1)
 				go func(IMEI string, ID string, WH string, VAI string, VAO string) {
 					defer wg.Done()
@@ -137,10 +136,11 @@ func (d PowerData) SendWHData(parsed [][]string, dir string, file string) error 
 					idToMedidor[ID].dataVAI = append(idToMedidor[ID].dataVAI, fmt.Sprintf("%s: %s", timestamp, VAI))
 					idToMedidor[ID].dataVAO = append(idToMedidor[ID].dataVAO, fmt.Sprintf("%s: %s", timestamp, VAO))
 				}(imei, id, wh, vai, vao)
-				// CACHE
-				//	cache.updateSent(imei, parsedTime)
 			}
 			wg.Wait()
+
+			// CACHE
+			cache.UpdateSent(file, parsedTime)
 			fmt.Printf("> Panel %s | Time (%s) | Sent %d/%d\n", file, timestamp, count, len(idToMedidor))
 		}
 	}

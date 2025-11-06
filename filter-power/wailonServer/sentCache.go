@@ -16,11 +16,11 @@ func NewSentCache(diskPath string) *SentCache {
 		diskPath: diskPath,
 		sentMap:  make(map[string]time.Time),
 	}
-	cache.loadCache()
+	cache.LoadCache()
 	return cache
 }
 
-func (c *SentCache) saveCache() {
+func (c *SentCache) SaveCache() {
 	f, err := os.Create(c.diskPath)
 	if err != nil {
 		return
@@ -36,7 +36,7 @@ func (c *SentCache) saveCache() {
 
 }
 
-func (c *SentCache) loadCache() {
+func (c *SentCache) LoadCache() {
 	f, err := os.Open(c.diskPath)
 	if err != nil {
 		c.sentMap = make(map[string]time.Time)
@@ -56,19 +56,19 @@ func (c *SentCache) loadCache() {
 	c.sentMap = data
 }
 
-func (c *SentCache) hasSent(imei string, t time.Time) bool {
+func (c *SentCache) HasSent(imei string, t time.Time) bool {
 	sent, ok := c.sentMap[imei]
 	if !ok {
 		return false
 	}
-	if t.Before(sent) {
-		return true
+	if t.After(sent) {
+		return false
 	}
-	return false
+	return true
 }
 
-func (c *SentCache) updateSent(imei string, sent time.Time) bool {
+func (c *SentCache) UpdateSent(imei string, sent time.Time) bool {
 	c.sentMap[imei] = sent
-	c.saveCache()
+	c.SaveCache()
 	return true
 }
