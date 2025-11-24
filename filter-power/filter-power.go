@@ -8,17 +8,15 @@ import (
 	"time"
 )
 
-type ComServer interface {
-	SendTimeValue(imei string, time time.Time, wh string, vai string, vao string) (bool, error)
+type IComServer interface {
+	SendTimeValue(imei string, time time.Time, data string) (bool, error)
+}
+type IPanelStore interface {
+	SendPanelServer(parsed [][]string, file string, serv IComServer) error
+	SavePanelData(dir, file string)
 }
 
-type CSVSource interface {
-	ReadCSVPower(fileName string) ([][]string, error)
-	SendWHData(data [][]string, dir string, file string) error
-	SendHistoryWH(data [][]string, dir string, file string) error
-}
-
-func FilterPower(store CSVSource, inputDir string, saveDir string) {
+func FilterPower(inputDir string, saveDir string, serv IComServer, p IPanelStore) error {
 
 	var wg sync.WaitGroup
 
@@ -38,12 +36,11 @@ func FilterPower(store CSVSource, inputDir string, saveDir string) {
 				fmt.Println("Ignoring file", f)
 				return
 			}
-			data, err := store.ReadCSVPower(inputDir + "/" + f)
+			data, err := ReadCSV(inputDir+"/"+f, ';')
 			if err != nil {
 				fmt.Printf("Error: %v", err)
 			}
-			err = store.SendWHData(data, saveDir, f)
-			//err = store.SendHistoryWH(data, saveDir, f)
+			err = p.SendPanelServer(data, f, serv)
 			if err != nil {
 				fmt.Printf("Error: %v", err)
 			}
@@ -51,5 +48,7 @@ func FilterPower(store CSVSource, inputDir string, saveDir string) {
 	}
 
 	wg.Wait()
+	p.SavePanelData(saveDir, "panel_server.csv")
+	return nil
 
 }

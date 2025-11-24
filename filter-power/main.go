@@ -2,6 +2,7 @@ package main
 
 import (
 	"filter-power/wailonServer"
+	"log"
 	"os"
 )
 
@@ -18,9 +19,14 @@ func main() {
 	if inputDir == "" {
 		inputDir = "csv-input"
 	}
-	ser := wailonServer.NewWailonServer(IP, PORT)
-	//ser := wailonServer.NewMockServer()
-	d := NewPowerData(ser)
-
-	FilterPower(d, inputDir, saveDir)
+	//ser := wailonServer.NewWailonServer(IP, PORT)
+	ser := wailonServer.NewMockServer()
+	p, err := NewPanelServer()
+	if err != nil {
+		log.Fatalf("Error creating new panel server: %v", err)
+	}
+	err = FilterPower(inputDir, saveDir, ser, p)
+	if err != nil {
+		log.Fatalf("Error main loop: %v", err)
+	}
 }
