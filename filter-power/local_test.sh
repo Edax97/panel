@@ -1,6 +1,7 @@
-TRANSFORMER_IDS="data_1.csv_modbus:1_mb_WHr_I
+#!/bin/bash
+export TRANSFORMER_IDS="data_1.csv_modbus:1_mb_WHr_I
 data_4.csv_modbus:8_mb_WHr_I"
-IMEI_MAP="data_3.csv_zigbee:19_zd_WHr_I,LOCAL 120 SUNTIME,809010503286837
+export IMEI_MAP="data_3.csv_zigbee:19_zd_WHr_I,LOCAL 120 SUNTIME,809010503286837
 data_3.csv_zigbee:42_zd_WHr_I,LOCAL 101B,382961957244554
 data_3.csv_zigbee:47_zd_WHr_I,LOCAL 306-307 KFC,368944276326380
 data_3.csv_zigbee:30_zd_WHr_I,LOCAL 208 CASA IDEAS,.
@@ -125,3 +126,5 @@ data_2.csv_zigbee:24_zd_WHr_I,LOCAL M201,743517127810913
 data_2.csv_zigbee:21_zd_WHr_I,MODULO M102,843360911270229
 data_4.csv_modbus:8_mb_WHr_I,TG1 - MEDICION GENERAL,985732002844726
 data_4.csv_modbus:9_mb_WHr_I,TTA-1 - MEDICION EMERGENCIA,504927963712023"
+
+go test .

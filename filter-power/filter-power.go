@@ -1,27 +1,23 @@
 package main
 
 import (
+	"filter-power/csvIO"
+	"filter-power/providers"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"sync"
-	"time"
 )
 
-type IComServer interface {
-	SendTimeValue(imei string, time time.Time, data string) (bool, error)
-}
-type IPanelStore interface {
-	SendPanelServer(parsed [][]string, file string, serv IComServer) error
-	SavePanelData(dir, file string)
-}
-
-func FilterPower(inputDir string, saveDir string, serv IComServer, p IPanelStore) error {
+func FilterPower(inputDir string, saveDir string, serv providers.IComServer, p providers.IPanelStore) error {
 
 	var wg sync.WaitGroup
 
 	files, err := os.ReadDir(inputDir)
-	PanicError(err)
+	if err != nil {
+		log.Panic(err)
+	}
 
 	for _, file := range files {
 		if file.IsDir() {
@@ -32,11 +28,11 @@ func FilterPower(inputDir string, saveDir string, serv IComServer, p IPanelStore
 			defer func() {
 				wg.Done()
 			}()
-			if !strings.HasSuffix(f, ".csv") {
+			if !strings.HasSuffix(f, ".csvIO") {
 				fmt.Println("Ignoring file", f)
 				return
 			}
-			data, err := ReadCSV(inputDir+"/"+f, ';')
+			data, err := csvIO.ReadCSV(inputDir+"/"+f, ';')
 			if err != nil {
 				fmt.Printf("Error: %v", err)
 			}
@@ -48,7 +44,7 @@ func FilterPower(inputDir string, saveDir string, serv IComServer, p IPanelStore
 	}
 
 	wg.Wait()
-	p.SavePanelData(saveDir, "panel_server.csv")
+	p.SavePanelData(saveDir, "panel_server.csvIO")
 	return nil
 
 }

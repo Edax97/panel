@@ -26,12 +26,12 @@ type PanelAPI struct {
 }
 
 func GetCSVRequest(url, token string) *http.Response {
-	get, err := http.NewRequest("GET", fmt.Sprintf("%s/csv", url), nil)
+	get, err := http.NewRequest("GET", fmt.Sprintf("%s/csvIO", url), nil)
 	if err != nil {
 		return nil
 	}
 	get.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
-	get.Header.Set("Accept", "text/csv, /")
+	get.Header.Set("Accept", "text/csvIO, /")
 	get.Header.Add("Connection", "keep-alive")
 	get.Header.Add("Referer", fmt.Sprintf("%s/public/settings/equipment-management/local-export", url))
 	get.Header.Add("Sec-Fetch-Dest", "empty")

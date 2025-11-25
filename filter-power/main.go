@@ -1,6 +1,7 @@
 package main
 
 import (
+	"filter-power/panelServer"
 	"filter-power/wailonServer"
 	"log"
 	"os"
@@ -14,14 +15,13 @@ func main() {
 	var saveDir = os.Args[2]
 
 	if saveDir == "" {
-		saveDir = "csv-save"
+		saveDir = "csvIO-save"
 	}
 	if inputDir == "" {
-		inputDir = "csv-input"
+		inputDir = "csvIO-input"
 	}
-	//ser := wailonServer.NewWailonServer(IP, PORT)
-	ser := wailonServer.NewMockServer()
-	p, err := NewPanelServer()
+	ser := wailonServer.NewWailonServer(IP, PORT)
+	p, err := panelServer.NewPanelServer()
 	if err != nil {
 		log.Fatalf("Error creating new panel server: %v", err)
 	}
