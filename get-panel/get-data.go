@@ -41,7 +41,7 @@ func GetPanelData(api PanelStore) {
 				wg.Done()
 			}()
 
-			err = api.saveCSV(data, fmt.Sprintf("%v/panel/%d.csvIO", savePath, i))
+			err = api.saveCSV(data, fmt.Sprintf("%v/panel/%d.csv", savePath, i))
 			PanicError(err)
 			fmt.Println("Descarga exitosa de datos", url)
 		}()

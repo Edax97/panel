@@ -31,7 +31,7 @@ func GetCSVRequest(url, token string) *http.Response {
 		return nil
 	}
 	get.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
-	get.Header.Set("Accept", "text/csvIO, /")
+	get.Header.Set("Accept", "text/csv, /")
 	get.Header.Add("Connection", "keep-alive")
 	get.Header.Add("Referer", fmt.Sprintf("%s/public/settings/equipment-management/local-export", url))
 	get.Header.Add("Sec-Fetch-Dest", "empty")

@@ -21,6 +21,7 @@ func main() {
 		inputDir = "../store/input"
 	}
 	ser := wailonServer.NewWailonServer(IP, PORT)
+	//ser := wailonServer.NewMockServer()
 	p, err := panelServer.NewPanelServer()
 	if err != nil {
 		log.Fatalf("Error creating new panel server: %v", err)
