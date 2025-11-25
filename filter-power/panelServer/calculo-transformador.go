@@ -56,9 +56,9 @@ func CalcTransformer(IaStr, IbStr, IcStr, VabStr, VbcStr, VcaStr, PftlStr string
 	IaPrim := Ia / 25
 	IbPrim := Ib / 25
 	IcPrim := Ic / 25
-	VabPrim := Vab / 25
-	VbcPrim := Vbc / 25
-	VcaPrim := Vca / 25
+	VabPrim := Vab * 25
+	VbcPrim := Vbc * 25
+	VcaPrim := Vca * 25
 	Iavg := (Ia + Ib + Ic) / 3
 	Vavg := (Vab + Vbc + Vca) / 3
 	Sprim := Iavg * Vavg * math.Sqrt(3)

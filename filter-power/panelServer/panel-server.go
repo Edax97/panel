@@ -144,7 +144,7 @@ func (p *PanelServer) SendPanelServer(parsed [][]string, file string, serv provi
 			var wg sync.WaitGroup
 			for id, imei := range idToImei {
 
-				log.Printf("Id: %s %s", id, imei)
+				//log.Printf("Id: %s %s", id, imei)
 				wg.Add(1)
 				go func(IMEI string, ID string, row []string) {
 					defer wg.Done()
