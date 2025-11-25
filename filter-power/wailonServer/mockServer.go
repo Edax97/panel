@@ -30,6 +30,7 @@ func (s *MockServer) SendTimeValue(imei string, date time.Time, data string) (bo
 	dataPacket := fmt.Sprintf("#D#%s%s\r\n", message, CRC)
 	s.OutBuffer = fmt.Sprintf("%s\n - DATA PACKET: %s\n", s.OutBuffer, dataPacket)
 
+	fmt.Println(s.OutBuffer)
 	return true, nil
 }
 
