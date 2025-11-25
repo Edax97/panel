@@ -105,14 +105,14 @@ func TestTransformers(t *testing.T) {
 	inputList := []InputCase{
 		{
 			file:      "data_3.csv",
-			time:      "2025/11/25 14:00:00",
+			time:      "2025/11/25 16:00:00",
 			id:        "zigbee:47_zd",
 			variables: []string{"WHr_I", "VARHr_I", "VARHr_O"},
 			values:    []string{"100.0", "5.0", "1.0"},
 		},
 		{
 			file:      "data_3.csv",
-			time:      "2028/01/01 11:15:00",
+			time:      "2022/01/01 11:15:00",
 			id:        "zigbee:14_zd",
 			variables: []string{"WHr_I"},
 			values:    []string{"200"},
@@ -139,7 +139,7 @@ func TestTransformers(t *testing.T) {
 		},
 		{
 			file: "data_1.csv",
-			time: "2030/01/01 10:00:00",
+			time: "2010/01/01 10:00:00",
 			id:   "modbus:1_mb",
 			variables: []string{"WHr_I", "VARHr_I", "VARHr_O",
 				"IA", "IB", "IC",
