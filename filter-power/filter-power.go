@@ -28,7 +28,7 @@ func FilterPower(inputDir string, saveDir string, serv providers.IComServer, p p
 			defer func() {
 				wg.Done()
 			}()
-			if !strings.HasSuffix(f, ".csvIO") {
+			if !strings.HasSuffix(f, ".csv") {
 				fmt.Println("Ignoring file", f)
 				return
 			}
@@ -44,7 +44,7 @@ func FilterPower(inputDir string, saveDir string, serv providers.IComServer, p p
 	}
 
 	wg.Wait()
-	p.SavePanelData(saveDir, "panel_server.csvIO")
+	p.SavePanelData(saveDir, "panel_server.csv")
 	return nil
 
 }

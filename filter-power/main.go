@@ -15,10 +15,10 @@ func main() {
 	var saveDir = os.Args[2]
 
 	if saveDir == "" {
-		saveDir = "csvIO-save"
+		saveDir = "../store/save"
 	}
 	if inputDir == "" {
-		inputDir = "csvIO-input"
+		inputDir = "../store/input"
 	}
 	ser := wailonServer.NewWailonServer(IP, PORT)
 	p, err := panelServer.NewPanelServer()
