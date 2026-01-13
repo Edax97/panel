@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-cd /home/panel/app || exit
+cd "$HOME/PANEL/app" || exit
 
-export CSV_INPUT_PATH="/home/panel/store/input"
-export CSV_UPLOAD_PATH="/home/panel/store/save"
+export CSV_INPUT_PATH="$HOME/PANEL/store/input"
+export CSV_UPLOAD_PATH="$HOME/PANEL/store/save"
 
 mkdir -p "$CSV_INPUT_PATH" "$CSV_UPLOAD_PATH"
 

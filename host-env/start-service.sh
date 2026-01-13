@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
-cd /home/panel/panel/host-env || exit
+BASE_DIR="$HOME/PANEL"
+APP_DIR="$BASE_DIR/app"
+mkdir -p "$BASE_DIR" "$APP_DIR"
+cp ./* "$APP_DIR/"
+cp ../filter-power/filter-power "$APP_DIR/"
 
-APP_DIR="/home/panel/app"
-mkdir -p "$APP_DIR"
-cp ./* "$APP_DIR"
 cd "$APP_DIR" || exit
 
-cd /home/panel/panel/filter-power || exit
-go build -o "$APP_DIR/filter-power" .
-cd "$APP_DIR" || exit
-
-sudo chmod +x get-device-info.sh upload-power.sh
-mkdir -p csv-input csv-save
+sudo chmod +x get-device-info.sh upload-power.sh get-device-upload.sh filter-power
 
 # Systemd services
-#cp device-upload.service device-upload.timer /etc/systemd/system/
-#systemctl daemon-reload
-#systemctl enable device-upload.timer
-#systemctl start device-upload.timer
+OPTION=$1
+
+if [ $OPTION -eq "reload"]; then
+    sudo cp device-upload.service device-upload.timer /etc/systemd/system/
+    sudo systemctl daemon-reload
+    sudo systemctl enable device-upload.timer
+    sudo systemctl restart device-upload.timer
+fi
