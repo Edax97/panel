@@ -13,7 +13,7 @@ sudo chmod +x get-device-info.sh upload-power.sh get-device-upload.sh filter-pow
 # Systemd services
 OPTION=$1
 
-if [ $OPTION -eq "reload" ]; then
+if [[ $OPTION == "reload" ]]; then
     sudo cp device-upload.service device-upload.timer /etc/systemd/system/
     sudo systemctl daemon-reload
     sudo systemctl enable device-upload.timer
