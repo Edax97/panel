@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 export SERVER_IP
 export SERVER_PORT
@@ -20,4 +20,3 @@ mkdir -p "$CSV_FILTER"
 ./filter-power "$CSV_INPUT" "$CSV_FILTER" || {
   echo "Filter and upload power data failed"; exit 1
 }
-

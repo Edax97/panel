@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+HOME=/home/pi
 cd "$HOME/PANEL/app" || exit
 
 export CSV_INPUT_PATH="$HOME/PANEL/store/input"

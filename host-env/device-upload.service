@@ -9,7 +9,7 @@ StartLimitIntervalSec=60
 Type=oneshot
 RemainAfterExit=no
 TimeoutStopSec=180
-Environment=PATH=/usr/bin:/bin:/usr/local/bin
+Environment=PATH=/usr/bin:/bin:/usr/local/bin:/usr/local/go/bin
 EnvironmentFile=/home/pi/.env
 ExecStart=/home/pi/PANEL/app/get-device-upload.sh
 TimeoutStartSec=0

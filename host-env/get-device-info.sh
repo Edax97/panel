@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 login (){
   local URL="$1/em-edm/sessions"
@@ -69,5 +69,3 @@ else
   echo "Secretos tienen distinto numero de lineas" >&2
   exit 1
 fi
-
-
