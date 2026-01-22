@@ -1,11 +1,13 @@
 package panelServer
 
 import (
+	"errors"
 	"filter-power/csvIO"
 	"filter-power/providers"
 	"filter-power/wailonServer"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -20,6 +22,11 @@ type MedidorDatos struct {
 type DeviceFieldNames struct {
 	cols  []string
 	mutex sync.Mutex
+}
+
+type TransformerDatum struct {
+	params TransformerParams
+	time   time.Time
 }
 
 func (f *DeviceFieldNames) getField(record []string, id, name string) string {
@@ -49,9 +56,10 @@ func (f *DeviceFieldNames) getField(record []string, id, name string) string {
 }
 
 type PanelServer struct {
-	imeiMap  map[string]*MedidorDatos
-	transIds map[string]bool
-	mutex    sync.Mutex
+	imeiMap        map[string]*MedidorDatos
+	transIds       map[string]bool
+	transformerMap map[string][]TransformerDatum
+	mutex          sync.Mutex
 }
 
 func NewPanelServer() (*PanelServer, error) {
@@ -76,7 +84,8 @@ func NewPanelServer() (*PanelServer, error) {
 	for _, id := range strings.Split(transformerIdStr, "\n") {
 		transIds[id] = true
 	}
-	return &PanelServer{imeiMap: imeiMap, transIds: transIds}, nil
+	transformerMap := make(map[string][]TransformerDatum, 2)
+	return &PanelServer{imeiMap: imeiMap, transIds: transIds, transformerMap: transformerMap}, nil
 }
 
 func (p *PanelServer) IsTransformer(id string) bool {
@@ -172,6 +181,20 @@ func (p *PanelServer) SendPanelServer(parsed [][]string, file string, serv provi
 						pftl := devFields.getField(row, ID, "PFTtl")
 
 						transformer := CalcTransformer(ia, ib, ic, vab, vbc, vca, pftl)
+						if _, ok := p.transformerMap[ID]; ok {
+							p.transformerMap[ID] = append(p.transformerMap[ID],
+								TransformerDatum{
+									time:   parsedTime,
+									params: *transformer,
+								})
+						} else {
+							p.transformerMap[ID] = []TransformerDatum{
+								{
+									time:   parsedTime,
+									params: *transformer,
+								},
+							}
+						}
 
 						dataSec := fmt.Sprintf("watth:3:%s,varh:3:%s,varo:3:%s,", wh, vai, vao) +
 							fmt.Sprintf("varin:3:%s,pfttl:3:%s,", vain, pftl) +
@@ -216,4 +239,63 @@ func (p *PanelServer) SavePanelData(dir, file string) {
 		filteredData = append(filteredData, rowh)
 	}
 	csvIO.SaveCSV(fmt.Sprintf("%s/%s", dir, file), filteredData)
+}
+
+func (p *PanelServer) SendCeldaRemonte(serv providers.IComServer) error {
+	imei := os.Getenv("CELDA_REMONTE_IMEI")
+	if imei == "" {
+		return fmt.Errorf("CELDA_REMONTE_IMEI not loaded")
+	}
+
+	var TransformerIds = os.Getenv("TRANSFORMER_IDS")
+	idList := strings.Split(TransformerIds, "\n")
+	if len(idList) != 2 {
+		return fmt.Errorf("not enough ids: %v", idList)
+	}
+
+	valuesT1, ok := p.transformerMap[idList[1]]
+	if !ok {
+		return fmt.Errorf("transformer 1 (%s) values not mapped", idList[1])
+	}
+	valuesT2, ok := p.transformerMap[idList[0]]
+	if !ok {
+		return fmt.Errorf("transformer 2 (%s) values not mapped", idList[0])
+	}
+	if len(valuesT1) != len(valuesT2) {
+		return errors.New("different measurements")
+	}
+
+	for j, datum1 := range valuesT1 {
+		datum2 := valuesT2[j]
+
+		t1 := datum1.params
+		t2 := datum2.params
+
+		Iacr := toFloat(t1.IaPrim) + toFloat(t2.IaPrim) //IaPrim t1 +IaPrim t2
+		Ibcr := toFloat(t1.IbPrim) + toFloat(t2.IbPrim) //IbPrim t1 + IbPrim t2
+		Iccr := toFloat(t1.IcPrim) + toFloat(t2.IcPrim) //IcPrim t1 + IcPrim t2
+		Vabcr := math.Max(toFloat(t1.VabPrim), toFloat(t2.VabPrim))
+		Vbccr := math.Max(toFloat(t1.VbcPrim), toFloat(t2.VbcPrim))
+		Vcacr := math.Max(toFloat(t1.VcaPrim), toFloat(t2.VcaPrim))
+		Iavgcr := (Iacr + Ibcr + Iccr) / 3
+		Vavgcr := (Vabcr + Vbccr + Vcacr) / 3
+		Scr := Iavgcr * Vavgcr * math.Sqrt(3)
+		Pcr := toFloat(t1.Pprim) + toFloat(t2.Pprim)
+		Qcr := toFloat(t1.Qprim) + toFloat(t2.Qprim)
+
+		data := fmt.Sprintf("iacr:3:%.2f,ibcr:3:%.2f,iccr:3:%.2f,vabcr:3:%.2f,vbccr:3:%.2f,vcacr:3:%.2f,iavgcr:3:%.2f,vavgcr:3:%.2f,scr:3:%.2f,pcr:3:%.2f,qcr:3:%.2f;",
+			Iacr, Ibcr, Iccr,
+			Vabcr, Vbccr, Vcacr, Iavgcr, Vavgcr,
+			Scr, Pcr, Qcr)
+
+		if ok, err := serv.SendTimeValue(imei, datum1.time, data); !ok {
+			log.Printf("error sending celda remonte: %v", err)
+		}
+	}
+
+	return nil
+}
+func toFloat(s string) float64 {
+	v, _ := strconv.ParseFloat(s, 64)
+	return v
 }

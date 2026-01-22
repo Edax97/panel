@@ -9,4 +9,5 @@ type IComServer interface {
 type IPanelStore interface {
 	SendPanelServer(parsed [][]string, file string, serv IComServer) error
 	SavePanelData(dir, file string)
+	SendCeldaRemonte(serv IComServer) error
 }

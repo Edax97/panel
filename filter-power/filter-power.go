@@ -44,6 +44,9 @@ func FilterPower(inputDir string, saveDir string, serv providers.IComServer, p p
 	}
 
 	wg.Wait()
+	if err := p.SendCeldaRemonte(serv); err != nil {
+		log.Printf("Error en celda de remonte: %v", err)
+	}
 	p.SavePanelData(saveDir, "panel_server.csv")
 	return nil
 

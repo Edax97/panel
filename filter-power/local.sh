@@ -127,4 +127,5 @@ data_2.csv_zigbee:21_zd_WHr_I,MODULO M102,843360911270229
 data_4.csv_modbus:8_mb_WHr_I,TG1 - MEDICION GENERAL,985732002844726
 data_4.csv_modbus:9_mb_WHr_I,TTA-1 - MEDICION EMERGENCIA,504927963712023"
 
-go run . $1 $2
+export CELDA_REMONTE_IMEI="716904795508303"
+go run . $1/input $1/save
