@@ -55,6 +55,8 @@ func (f *DeviceFieldNames) getField(record []string, id, name string) string {
 	return fmt.Sprintf("%f", v)
 }
 
+var crSent = make([]string, 0)
+
 type PanelServer struct {
 	imeiMap        map[string]*MedidorDatos
 	transIds       map[string]bool
@@ -238,6 +240,11 @@ func (p *PanelServer) SavePanelData(dir, file string) {
 		rowh = append(rowh, Imei.data...)
 		filteredData = append(filteredData, rowh)
 	}
+	crImei := os.Getenv("CELDA_REMONTE_IMEI")
+	rowh := []string{"CELDA_REMONTE", crImei}
+	rowh = append(rowh, crSent...)
+	filteredData = append(filteredData, rowh)
+
 	csvIO.SaveCSV(fmt.Sprintf("%s/%s", dir, file), filteredData)
 }
 
@@ -291,6 +298,8 @@ func (p *PanelServer) SendCeldaRemonte(serv providers.IComServer) error {
 		if ok, err := serv.SendTimeValue(imei, datum1.time, data); !ok {
 			log.Printf("error sending celda remonte: %v", err)
 		}
+
+		crSent = append(crSent, fmt.Sprintf("%T, %s", datum1.time, data))
 	}
 
 	return nil
